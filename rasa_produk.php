@@ -1,12 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 require_once 'koneksi.php';
-
 $result = [];
-
 if (!empty($_GET['rasa'])) {
     $rasa = mysqli_real_escape_string($koneksi, trim($_GET['rasa']));
-
     $sql = "
         SELECT
             p.id_produk,
@@ -22,7 +19,6 @@ if (!empty($_GET['rasa'])) {
 
 } elseif (!empty($_GET['keyword'])) {
     $keyword = mysqli_real_escape_string($koneksi, trim($_GET['keyword']));
-
     $sql = "
         SELECT
             p.id_produk,
@@ -37,18 +33,14 @@ if (!empty($_GET['rasa'])) {
         ORDER BY p.nama_produk ASC
         LIMIT 50
     ";
-
 } else {
     echo json_encode([]);
     exit;
 }
-
 $query = mysqli_query($koneksi, $sql);
-
 if ($query) {
     while ($row = mysqli_fetch_assoc($query)) {
         $result[] = $row;
     }
 }
-
 echo json_encode($result, JSON_UNESCAPED_UNICODE);
