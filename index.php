@@ -215,6 +215,19 @@
 
     /* Beranda link aktif */
     .nav-links a { cursor: pointer; }
+
+    /* Fix layout hero-visual */
+    .hero-visual {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 16px !important;
+      align-items: stretch !important;
+    }
+
+    .visual-card.card-1 {
+      width: 100% !important;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 
