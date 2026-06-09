@@ -349,37 +349,37 @@ body {
   50% { transform: translateY(-10px); }
 }
 
- .flavor-section {
-    padding: 56px 24px 40px;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
+.flavor-section {
+  padding: 56px 32px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-  .flavor-section-header {
-    text-align: center;
-    margin-bottom: 36px;
-  }
+.flavor-section-header {
+  text-align: left;
+  margin-bottom: 36px;
+}
 
-  .flavor-section-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.6rem, 3vw, 2.2rem);
-    font-weight: 700;
-    color: #1a1a2e;
-    margin-bottom: 8px;
-  }
+.flavor-section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
 
-  .flavor-section-header p {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    color: #6b7280;
-    font-size: 0.95rem;
-  }
+.flavor-section-header p {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
 
-  .flavor-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    justify-content: center;
-  }
+.flavor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+}
 
   .flavor-card {
     display: flex;
