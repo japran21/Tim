@@ -1,3 +1,38 @@
+<?php
+require_once 'koneksi.php';
+
+// Ambil data kategori rasa dari DB
+$queryRasa = "SELECT * FROM kategori_rasa ORDER BY id_rasa ASC";
+$resultRasa = mysqli_query($koneksi, $queryRasa);
+
+// Hitung jumlah produk per rasa menggunakan tabel produk_rasa
+$rasaCounts = [];
+$countQuery = "
+    SELECT kr.id_rasa, kr.jenis_rasa, COUNT(pr.id_produk) as total
+    FROM kategori_rasa kr
+    LEFT JOIN produk_rasa pr ON kr.id_rasa = pr.id_rasa
+    GROUP BY kr.id_rasa
+";
+$countResult = mysqli_query($koneksi, $countQuery);
+while ($count = mysqli_fetch_assoc($countResult)) {
+    $rasaCounts[$count['jenis_rasa']] = $count['total'];
+}
+
+// Hitung jumlah produk per kategori produk
+$kategoriCounts = [];
+$kategoriQuery = "
+    SELECT kategori_produk, COUNT(*) as total
+    FROM produk
+    WHERE kategori_produk IS NOT NULL AND kategori_produk != ''
+    GROUP BY kategori_produk
+    ORDER BY kategori_produk ASC
+";
+$kategoriResult = mysqli_query($koneksi, $kategoriQuery);
+while ($row = mysqli_fetch_assoc($kategoriResult)) {
+    $kategoriCounts[$row['kategori_produk']] = $row['total'];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -6,229 +41,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UMKM Ciwaruga</title>
   <link rel="stylesheet" href="style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    /* ===== FILTER RASA ===== */
-    .filter-rasa-box {
-      background: #fff;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      margin-top: 16px;
-    }
-
-    .filter-rasa-box h4 {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin: 0 0 12px 0;
-    }
-
-    .filter-rasa-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .btn-rasa {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 2px solid transparent;
-      background: #f7f7f7;
-      cursor: pointer;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #333;
-      transition: all 0.2s;
-      text-align: left;
-    }
-
-    .btn-rasa:hover {
-      background: #f0f4ff;
-      border-color: #3b5bdb;
-      color: #3b5bdb;
-    }
-
-    .btn-rasa.active {
-      background: #3b5bdb;
-      color: #fff;
-      border-color: #3b5bdb;
-    }
-
-    .btn-rasa .rasa-emoji {
-      font-size: 1.2rem;
-    }
-
-    /* ===== SEARCH RESULT STYLES ===== */
-    #hasil-pencarian {
-      padding: 48px 24px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    #hasil-pencarian h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      margin-bottom: 8px;
-      color: #1a1a1a;
-    }
-
-    #hasil-pencarian .result-info {
-      color: #666;
-      margin-bottom: 28px;
-      font-size: 0.95rem;
-    }
-
-    .umkm-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    .umkm-card {
-      background: #fff;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .umkm-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.13);
-    }
-
-    .umkm-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      background: #f3f3f3;
-    }
-
-    .umkm-card .img-placeholder {
-      width: 100%;
-      height: 200px;
-      background: linear-gradient(135deg, #f5a623, #f76b1c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-    }
-
-    .umkm-card-body {
-      padding: 20px;
-    }
-
-    .umkm-card-body h3 {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin: 0 0 8px 0;
-      color: #1a1a1a;
-    }
-
-    .umkm-card-body .badge-halal {
-      display: inline-block;
-      font-size: 0.7rem;
-      padding: 3px 8px;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
-
-    .badge-halal.bersertifikat { background: #e6f9ee; color: #1a8c42; }
-    .badge-halal.belum { background: #fff3e0; color: #e65c00; }
-
-    .umkm-card-body .harga {
-      font-size: 1rem;
-      color: #e65c00;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .umkm-card-body .rasa-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .rasa-tags .tag {
-      background: #f0f4ff;
-      color: #3b5bdb;
-      font-size: 0.72rem;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-weight: 500;
-    }
-
-    .umkm-card-body .lokasi {
-      font-size: 0.8rem;
-      color: #888;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: flex-start;
-      gap: 4px;
-    }
-
-    .umkm-card-body .produk-list {
-      font-size: 0.82rem;
-      color: #444;
-      border-top: 1px solid #f0f0f0;
-      padding-top: 10px;
-      margin-top: 6px;
-    }
-
-    .produk-list strong { display: block; margin-bottom: 4px; color: #1a1a1a; }
-    .produk-list ul { margin: 0; padding-left: 18px; max-height: 90px; overflow-y: auto; }
-    .produk-list ul li { margin-bottom: 2px; }
-
-    .not-found { text-align: center; padding: 60px 20px; color: #888; }
-    .not-found .icon { font-size: 3rem; margin-bottom: 12px; }
-
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: #888;
-      font-size: 1rem;
-    }
-
-    .loading::after {
-      content: '';
-      display: inline-block;
-      width: 18px;
-      height: 18px;
-      border: 3px solid #ddd;
-      border-top-color: #f76b1c;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Beranda link aktif */
-    .nav-links a { cursor: pointer; }
-
-    /* Fix layout hero-visual */
-    .hero-visual {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 16px !important;
-      align-items: stretch !important;
-    }
-
-    .visual-card.card-1 {
-      width: 100% !important;
-      box-sizing: border-box;
-    }
-  </style>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
 </head>
 
 <body>
@@ -242,15 +57,19 @@
         </div>
       </div>
       <nav class="nav-links">
-        <a onclick="kembaliKeBeranda()">Beranda</a>
-        <a href="#">Tentang</a>
+        <a href="index.php">Beranda</a>
+        <a href="umkm.php">Kelola UMKM</a>
+        <a href="produk.php">Kelola Produk</a>
+        <a href="kategori_rasa.php">Kelola Rasa</a>
+        <a href="bayar.php">Kelola Pembayaran</a>
+        <a href="mitra.php">Kelola Mitra</a>
       </nav>
       <div class="nav-actions"></div>
     </div>
   </header>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero" id="hero-section">
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero">
     <div class="hero-bg-pattern"></div>
     <div class="hero-content">
       <div class="hero-badge">📍 Ciwaruga, Kabupaten Bandung Barat</div>
@@ -269,14 +88,12 @@
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <input type="text" id="search-input" placeholder="Cari makanan, contoh: batagor, surabi, mie ayam..." />
-          <button class="search-btn" id="search-btn" onclick="cariMakanan()">Cari</button>
+          <input type="text" id="searchInput" placeholder="Cari Makanan anda..." />
+          <button class="search-btn" onclick="doSearch()">Cari</button>
         </div>
         <div class="search-tags">
-          <span onclick="cariDenganKeyword('Batagor')">🍢 Batagor</span>
-          <span onclick="cariDenganKeyword('Mie Ayam')">🍜 Mie Ayam</span>
-          <span onclick="cariDenganKeyword('Surabi')">🥞 Surabi</span>
-          <span onclick="cariDenganKeyword('Es Kelapa')">🥥 Es Kelapa</span>
+          <span>🍱 Makanan</span>
+          <span>🥤 Minuman</span>
         </div>
       </div>
     </div>
@@ -286,29 +103,82 @@
         <div class="card-emoji">🍜</div>
         <div>
           <div class="card-title">Street Food</div>
-          <div class="card-sub">21 UMKM</div>
-        </div>
-      </div>
-
-      <!-- FILTER RASA -->
-      <div class="filter-rasa-box">
-        <h4>🎯 Filter Rasa</h4>
-        <div class="filter-rasa-buttons">
-          <button class="btn-rasa" onclick="filterRasa('Asam', this)"><span class="rasa-emoji">🍋</span> Asam</button>
-          <button class="btn-rasa" onclick="filterRasa('Asin', this)"><span class="rasa-emoji">🧂</span> Asin</button>
-          <button class="btn-rasa" onclick="filterRasa('Gurih', this)"><span class="rasa-emoji">🍗</span> Gurih</button>
-          <button class="btn-rasa" onclick="filterRasa('Manis', this)"><span class="rasa-emoji">🍯</span> Manis</button>
-          <button class="btn-rasa" onclick="filterRasa('Pedas', this)"><span class="rasa-emoji">🌶️</span> Pedas</button>
+          <div class="card-sub"></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== HASIL PENCARIAN ===== -->
-  <section id="hasil-pencarian" style="display:none;">
-    <h2 id="judul-hasil">Hasil Pencarian</h2>
-    <p class="result-info" id="info-hasil"></p>
-    <div class="umkm-grid" id="grid-hasil"></div>
+  <section class="flavor-section">
+    <div class="flavor-section-header">
+      <h2>Sok Cari rasa apa</h2>
+      <p>YOK YOK PILIH</p>
+    </div>
+
+    <?php
+        $emojiRasa = ['Asin', 'Gurih', 'Manis', 'Pedas','Asam', ];
+        ?>
+    <div class="flavor-grid">
+      <?php 
+            mysqli_data_seek($resultRasa, 0);
+            while ($rasa = mysqli_fetch_assoc($resultRasa)) :
+                $namaRasa  = htmlspecialchars($rasa['jenis_rasa']);
+                $emoji     = $emojiRasa[$namaRasa] ?? 'MISSING';
+                $total     = $rasaCounts[$namaRasa] ?? 0;
+            ?>
+      <div class="flavor-card" data-rasa="<?= $namaRasa ?>" data-id="<?= (int)$rasa['id_rasa'] ?>"
+        onclick="filterByRasa('<?= $namaRasa ?>', this)">
+        <span class="flavor-emoji"><?= $emoji ?></span>
+        <span class="flavor-label"><?= $namaRasa ?></span>
+        <?php if ($total > 0) : ?>
+        <span class="flavor-card-badge"><?= $total ?> produk</span>
+        <?php endif; ?>
+      </div>
+      <?php endwhile; ?>
+    </div>
+  </section>
+
+  <!-- ===== KATEGORI FILTER SECTION ===== -->
+  <section class="kategori-section">
+    <div class="flavor-section-header">
+      <h2>Kategori Produk</h2>
+      <p>Pilih berdasarkan jenis makanan</p>
+    </div>
+
+    <div class="kategori-grid">
+      <?php
+      $kategoriList = [
+          'Makanan' => ['emoji' => '🍜', 'color' => '#f59e0b', 'bg' => '#fffbeb'],
+          'Minuman' => ['emoji' => '🥤', 'color' => '#3b82f6', 'bg' => '#eff6ff'],
+          'Topping' => ['emoji' => '🍯', 'color' => '#ec4899', 'bg' => '#fdf2f8'],
+          'Snack'   => ['emoji' => '🍿', 'color' => '#22c55e', 'bg' => '#f0fdf4'],
+      ];
+      foreach ($kategoriList as $namaKat => $info):
+          $totalKat = $kategoriCounts[$namaKat] ?? 0;
+      ?>
+      <div class="kategori-card" data-kategori="<?= $namaKat ?>"
+        style="--kat-color: <?= $info['color'] ?>; --kat-bg: <?= $info['bg'] ?>;" 
+        onclick="filterByKategori('<?= $namaKat ?>', this)">
+        <span class="kategori-emoji"><?= $info['emoji'] ?></span>
+        <div class="kategori-info">
+          <span class="kategori-label"><?= $namaKat ?></span>
+          <span class="kategori-count"><?= $totalKat ?> produk</span>
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
+
+  <section class="results-section" id="resultsSection" style="display:none;">
+    <div class="results-header">
+      <div class="results-title">
+        Menampilkan hasil untuk: <span id="activeFilterLabel">—</span>
+      </div>
+      <button class="reset-filter" id="resetBtn" onclick="resetFilter()">✕ Hapus Filter</button>
+    </div>
+    <div class="results-grid" id="resultsGrid">
+      <!-- Diisi via AJAX -->
+    </div>
   </section>
 
   <footer class="footer">
@@ -322,152 +192,319 @@
   </footer>
 
   <script>
-    // Tekan Enter untuk cari
-    document.getElementById('search-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') cariMakanan();
+  const emojiMap = {
+    'Asin': '🧂',
+    'Gurih': '🍗',
+    'Manis': '🍯',
+    'Pedas': '🌶️',
+    'Asam': '🍋',
+  };
+
+  const kategoriEmojiMap = {
+    'Makanan': '🍜',
+    'Minuman': '🥤',
+    'Topping': '🍯',
+    'Snack': '🍿',
+  };
+
+  let activeRasa = null;
+  let activeKategori = null;
+
+  function clearAllActive() {
+    activeRasa = null;
+    activeKategori = null;
+    document.querySelectorAll('.flavor-card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.kategori-card').forEach(c => c.classList.remove('active'));
+  }
+
+  function filterByRasa(namaRasa, cardEl) {
+    if (activeRasa === namaRasa) {
+      resetFilter();
+      return;
+    }
+    clearAllActive();
+    activeRasa = namaRasa;
+
+    // Tandai card aktif
+    cardEl.classList.add('active');
+
+    // Tampilkan seksi hasil
+    const section = document.getElementById('resultsSection');
+    const grid = document.getElementById('resultsGrid');
+    const label = document.getElementById('activeFilterLabel');
+    const resetBtn = document.getElementById('resetBtn');
+
+    section.style.display = 'block';
+    label.textContent = (emojiMap[namaRasa] || '🍽️') + ' Rasa ' + namaRasa;
+    resetBtn.classList.add('visible');
+
+    // Loading state
+    grid.innerHTML = '<div class="loading-spinner">⏳ Memuat produk...</div>';
+
+    // Scroll ke seksi hasil
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
     });
 
-    function kembaliKeBeranda() {
-      // Sembunyikan hasil pencarian
-      document.getElementById('hasil-pencarian').style.display = 'none';
-      // Reset input search
-      document.getElementById('search-input').value = '';
-      // Reset tombol filter rasa
-      document.querySelectorAll('.btn-rasa').forEach(b => b.classList.remove('active'));
-      // Scroll ke atas
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Fetch produk
+    fetch('get_produk.php?rasa=' + encodeURIComponent(namaRasa))
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          showError(grid, data.error);
+        } else {
+          renderProducts(data, namaRasa);
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        showError(grid, 'Gagal memuat data. Periksa koneksi database.');
+      });
+  }
+
+  function filterByKategori(namaKategori, cardEl) {
+    if (activeKategori === namaKategori) {
+      resetFilter();
+      return;
     }
+    clearAllActive();
+    activeKategori = namaKategori;
 
-    function cariDenganKeyword(keyword) {
-      document.getElementById('search-input').value = keyword;
-      cariMakanan();
-    }
+    // Tandai card aktif
+    cardEl.classList.add('active');
 
-    function filterRasa(rasa, btn) {
-      // Toggle active
-      document.querySelectorAll('.btn-rasa').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+    const section = document.getElementById('resultsSection');
+    const grid = document.getElementById('resultsGrid');
+    const label = document.getElementById('activeFilterLabel');
+    const resetBtn = document.getElementById('resetBtn');
 
-      const section = document.getElementById('hasil-pencarian');
-      const grid = document.getElementById('grid-hasil');
-      const judul = document.getElementById('judul-hasil');
-      const info = document.getElementById('info-hasil');
+    const emoji = kategoriEmojiMap[namaKategori] || '📂';
+    section.style.display = 'block';
+    label.textContent = emoji + ' Kategori ' + namaKategori;
+    resetBtn.classList.add('visible');
 
-      section.style.display = 'block';
-      judul.textContent = 'Makanan Rasa ' + rasa;
-      info.textContent = '';
-      grid.innerHTML = '<div class="loading">Sedang memfilter</div>';
+    grid.innerHTML = '<div class="loading-spinner">⏳ Memuat produk...</div>';
 
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
 
-      fetch('filter_rasa.php?rasa=' + encodeURIComponent(rasa))
-        .then(res => res.json())
-        .then(data => tampilkanHasil(data, 'rasa ' + rasa))
-        .catch(err => {
-          grid.innerHTML = '<div class="not-found"><div class="icon">⚠️</div><p>Gagal terhubung ke server.</p></div>';
-          judul.textContent = 'Koneksi Gagal';
-        });
-    }
+    fetch('get_produk.php?kategori=' + encodeURIComponent(namaKategori))
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          showError(grid, data.error);
+        } else {
+          renderKategoriProducts(data, namaKategori);
+        }
+      })
+      .catch(error => {
+        console.error('Fetch error:', error);
+        showError(grid, 'Gagal memuat data. Periksa koneksi database.');
+      });
+  }
 
-    function cariMakanan() {
-      const keyword = document.getElementById('search-input').value.trim();
-      if (!keyword) {
-        alert('Masukkan kata kunci pencarian terlebih dahulu!');
-        return;
-      }
-
-      // Reset filter rasa
-      document.querySelectorAll('.btn-rasa').forEach(b => b.classList.remove('active'));
-
-      const section = document.getElementById('hasil-pencarian');
-      const grid = document.getElementById('grid-hasil');
-      const judul = document.getElementById('judul-hasil');
-      const info = document.getElementById('info-hasil');
-
-      section.style.display = 'block';
-      judul.textContent = 'Mencari "' + keyword + '"...';
-      info.textContent = '';
-      grid.innerHTML = '<div class="loading">Sedang mencari</div>';
-
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      fetch('search_produk.php?keyword=' + encodeURIComponent(keyword))
-        .then(res => res.json())
-        .then(data => tampilkanHasil(data, '"' + keyword + '"'))
-        .catch(err => {
-          grid.innerHTML = '<div class="not-found"><div class="icon">⚠️</div><p>Gagal terhubung ke server. Pastikan XAMPP berjalan.</p></div>';
-          document.getElementById('judul-hasil').textContent = 'Koneksi Gagal';
-        });
-    }
-
-    function tampilkanHasil(data, label) {
-      const grid = document.getElementById('grid-hasil');
-      const judul = document.getElementById('judul-hasil');
-      const info = document.getElementById('info-hasil');
-
-      if (data.error) {
-        grid.innerHTML = '<div class="not-found"><div class="icon">⚠️</div><p>' + data.error + '</p></div>';
-        judul.textContent = 'Terjadi Kesalahan';
-        return;
-      }
-
-      if (data.length === 0) {
-        judul.textContent = 'Tidak Ditemukan';
-        info.textContent = 'Tidak ada makanan yang cocok dengan ' + label;
-        grid.innerHTML = '<div class="not-found"><div class="icon">🔍</div><p>Coba kata kunci atau filter lain.</p></div>';
-        return;
-      }
-
-      judul.textContent = 'Hasil untuk ' + label;
-      info.textContent = 'Ditemukan ' + data.length + ' UMKM yang sesuai';
-
-      grid.innerHTML = data.map(umkm => {
-        const fotoUrl = umkm.foto ? umkm.foto : null;
-        const gambar = fotoUrl
-          ? `<img src="${fotoUrl}" alt="${umkm.nama_umkm}" onerror="this.parentElement.innerHTML='<div class=\\'img-placeholder\\'>🍽️</div>'">`
-          : `<div class="img-placeholder">🍽️</div>`;
-
-        const isHalal = umkm.status_halal === 'Halal Bersertifikat';
-        const badgeClass = isHalal ? 'bersertifikat' : 'belum';
-
-        const hargaMulai = formatRupiah(umkm.harga_mulai);
-        const hargaMaks = formatRupiah(umkm.harga_maks);
-        const hargaStr = umkm.harga_mulai === umkm.harga_maks ? hargaMulai : hargaMulai + ' – ' + hargaMaks;
-
-        const rasaTags = umkm.daftar_rasa
-          ? umkm.daftar_rasa.split(', ').map(r => `<span class="tag">${r}</span>`).join('')
-          : '';
-
-        const produkItems = umkm.produk_list.slice(0, 8).map(p => `<li>${p}</li>`).join('');
-        const sisanya = umkm.produk_list.length > 8 ? `<li style="color:#aaa">...dan ${umkm.produk_list.length - 8} lainnya</li>` : '';
-
-        const asalBersih = umkm.asal_daerah
-          ? [...new Set(umkm.asal_daerah.split(', ').filter(a => a && a !== 'NULL'))].join(', ')
-          : '';
-
-        return `
-          <div class="umkm-card">
-            ${gambar}
-            <div class="umkm-card-body">
-              <h3>${umkm.nama_umkm}</h3>
-              <span class="badge-halal ${badgeClass}">${umkm.status_halal}</span>
-              <div class="harga">💰 Rp ${hargaStr}</div>
-              <div class="rasa-tags">${rasaTags}</div>
-              ${asalBersih ? `<div class="lokasi">📍 Asal: ${asalBersih}</div>` : ''}
-              <div class="lokasi">🗺️ ${umkm.lokasi}</div>
-              <div class="produk-list">
-                <strong>Menu yang tersedia:</strong>
-                <ul>${produkItems}${sisanya}</ul>
-              </div>
+  function showError(grid, message) {
+    grid.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-emoji">⚠️</div>
+                <p>${escapeHtml(message)}</p>
             </div>
-          </div>
         `;
-      }).join('');
+  }
+
+  function renderProducts(products, namaRasa) {
+    const grid = document.getElementById('resultsGrid');
+
+    if (!products || products.length === 0) {
+      grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-emoji">😕</div>
+                    <p>Tidak ada produk dengan rasa <strong>${escapeHtml(namaRasa)}</strong> saat ini.</p>
+                </div>
+            `;
+      return;
     }
 
-    function formatRupiah(angka) {
-      return new Intl.NumberFormat('id-ID').format(angka);
+    const emoji = emojiMap[namaRasa] || '🍽️';
+    grid.innerHTML = products.map(product => {
+      return `
+                <a href="detail_produk.php?id=${product.id_produk}" class="product-card" style="text-decoration:none;cursor:pointer;display:block;">
+                    <div class="product-card-top">${emoji}</div>
+                    <div class="product-card-body">
+                        <div class="product-name">${escapeHtml(product.nama_produk)}</div>
+                        <div class="product-umkm">🏪 ${escapeHtml(product.nama_umkm)}</div>
+                        <div class="product-tags">
+                            <span class="product-tag tag-rasa-${escapeHtml(namaRasa)}">
+                                ${emoji} ${escapeHtml(namaRasa)}
+                            </span>
+                            ${product.daftar_rasa ? `
+                                <span class="product-tag" style="background:#f3f4f6;color:#6b7280;">
+                                     ${escapeHtml(product.daftar_rasa)}
+                                </span>
+                            ` : ''}
+                            ${product.kategori_produk ? `
+                                <span class="product-tag" style="background:#e0e7ff;color:#3730a3;">
+                                    📂 ${escapeHtml(product.kategori_produk)}
+                                </span>
+                            ` : ''}
+                        </div>
+                        <div class="product-harga">Rp ${formatRupiah(product.harga)}</div>
+                    </div>
+                </a>
+            `;
+    }).join('');
+  }
+
+  function renderKategoriProducts(products, namaKategori) {
+    const grid = document.getElementById('resultsGrid');
+    const emoji = kategoriEmojiMap[namaKategori] || '📂';
+
+    if (!products || products.length === 0) {
+      grid.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-emoji">😕</div>
+                    <p>Tidak ada produk dalam kategori <strong>${escapeHtml(namaKategori)}</strong> saat ini.</p>
+                </div>
+            `;
+      return;
     }
+
+    grid.innerHTML = products.map(product => {
+      return `
+                <a href="detail_produk.php?id=${product.id_produk}" class="product-card" style="text-decoration:none;cursor:pointer;display:block;">
+                    <div class="product-card-top">${emoji}</div>
+                    <div class="product-card-body">
+                        <div class="product-name">${escapeHtml(product.nama_produk)}</div>
+                        <div class="product-umkm">🏪 ${escapeHtml(product.nama_umkm)}</div>
+                        <div class="product-tags">
+                            <span class="product-tag" style="background:#e0e7ff;color:#3730a3;">
+                                ${emoji} ${escapeHtml(namaKategori)}
+                            </span>
+                            ${product.daftar_rasa ? `
+                                <span class="product-tag" style="background:#f3f4f6;color:#6b7280;">
+                                     ${escapeHtml(product.daftar_rasa)}
+                                </span>
+                            ` : ''}
+                        </div>
+                        <div class="product-harga">Rp ${formatRupiah(product.harga)}</div>
+                    </div>
+                </a>
+            `;
+    }).join('');
+  }
+
+  function resetFilter() {
+    clearAllActive();
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('resetBtn').classList.remove('visible');
+  }
+
+  function doSearch() {
+    const keyword = document.getElementById('searchInput').value.trim();
+
+    if (!keyword) {
+      alert('Masukkan kata kunci pencarian!');
+      return;
+    }
+
+    const section = document.getElementById('resultsSection');
+    const grid = document.getElementById('resultsGrid');
+    const label = document.getElementById('activeFilterLabel');
+    const resetBtn = document.getElementById('resetBtn');
+
+    // Reset active rasa jika ada
+    if (activeRasa) {
+      activeRasa = null;
+      document.querySelectorAll('.flavor-card').forEach(c => c.classList.remove('active'));
+    }
+
+    section.style.display = 'block';
+    label.textContent = '🔍 "' + escapeHtml(keyword) + '"';
+    resetBtn.classList.add('visible');
+    grid.innerHTML = '<div class="loading-spinner">⏳ Mencari produk...</div>';
+
+    section.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+
+    fetch('get_produk.php?keyword=' + encodeURIComponent(keyword))
+      .then(response => response.json())
+      .then(data => {
+        if (!data || data.length === 0) {
+          grid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-emoji">😕</div>
+                            <p>Produk "<strong>${escapeHtml(keyword)}</strong>" tidak ditemukan.</p>
+                        </div>
+                    `;
+          return;
+        }
+        grid.innerHTML = data.map(product => {
+          return `
+                        <a href="detail_produk.php?id=${product.id_produk}" class="product-card" style="text-decoration:none;cursor:pointer;display:block;">
+                            <div class="product-card-top">🍽️</div>
+                            <div class="product-card-body">
+                                <div class="product-name">${escapeHtml(product.nama_produk)}</div>
+                                <div class="product-umkm">🏪 ${escapeHtml(product.nama_umkm)}</div>
+                                <div class="product-tags">
+                                    ${product.kategori_produk ? `
+                                        <span class="product-tag" style="background:#e0e7ff;color:#3730a3;">
+                                            📂 ${escapeHtml(product.kategori_produk)}
+                                        </span>
+                                    ` : ''}
+                                    ${product.daftar_rasa ? `
+                                        <span class="product-tag" style="background:#f3f4f6;color:#6b7280;">
+                                             ${escapeHtml(product.daftar_rasa)}
+                                        </span>
+                                    ` : ''}
+                                </div>
+                                <div class="product-harga">Rp ${formatRupiah(product.harga)}</div>
+                            </div>
+                        </a>
+                    `;
+        }).join('');
+      })
+      .catch(error => {
+        console.error('Search error:', error);
+        grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-emoji"></div>
+                        <p>Gagal memuat data. Periksa koneksi database.</p>
+                    </div>
+                `;
+      });
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+
+  function formatRupiah(num) {
+    return Number(num).toLocaleString('id-ID');
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          doSearch();
+        }
+      });
+    }
+  });
   </script>
 </body>
+
 </html>
