@@ -33,6 +33,7 @@ if (!empty($_GET['rasa'])) {
                 p.nama_produk,
                 p.harga,
                 p.kategori_produk,
+                p.asal_daerah,
                 u.nama_umkm,
                 u.foto,
                 GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa
@@ -74,6 +75,7 @@ if (!empty($_GET['rasa'])) {
             p.nama_produk,
             p.harga,
             p.kategori_produk,
+            p.asal_daerah,
             u.nama_umkm,
             u.foto,
             GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa
@@ -111,6 +113,7 @@ if (!empty($_GET['rasa'])) {
             p.nama_produk,
             p.harga,
             p.kategori_produk,
+            p.asal_daerah,
             u.nama_umkm,
             u.foto,
             GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa
@@ -138,8 +141,44 @@ if (!empty($_GET['rasa'])) {
         exit;
     }
 
+} elseif (!empty($_GET['asal_daerah'])) {
+    $asal = mysqli_real_escape_string($koneksi, trim($_GET['asal_daerah']));
+
+    $sql = "
+        SELECT
+            p.id_produk,
+            p.nama_produk,
+            p.harga,
+            p.kategori_produk,
+            p.asal_daerah,
+            u.nama_umkm,
+            u.foto,
+            GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa
+        FROM produk p
+        JOIN umkm u  ON p.id_umkm = u.id_umkm
+        LEFT JOIN produk_rasa pr  ON p.id_produk = pr.id_produk
+        LEFT JOIN kategori_rasa kr ON pr.id_rasa  = kr.id_rasa
+        WHERE p.asal_daerah = '$asal'
+        GROUP BY p.id_produk, u.nama_umkm, u.foto
+        ORDER BY p.nama_produk ASC
+        LIMIT 100
+    ";
+
+    $query = mysqli_query($koneksi, $sql);
+    if ($query) {
+        while ($row = mysqli_fetch_assoc($query)) {
+            $row['foto']  = sanitasiFoto($row['foto']);
+            $row['harga'] = (float) $row['harga'];
+            $result[]     = $row;
+        }
+    } else {
+        error_log("get_produk.php [asal_daerah] query error: " . mysqli_error($koneksi));
+        echo json_encode(['error' => 'Terjadi kesalahan saat mengambil data.']);
+        exit;
+    }
+
 } else {
-    echo json_encode(['error' => 'Parameter tidak ditemukan. Gunakan ?rasa=, ?keyword=, atau ?kategori=']);
+    echo json_encode(['error' => 'Parameter tidak ditemukan. Gunakan ?rasa=, ?keyword=, ?kategori=, atau ?asal_daerah=']);
     exit;
 }
 
