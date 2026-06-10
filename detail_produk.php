@@ -802,12 +802,7 @@ foreach ($waktuList as $w) {
               <?php endforeach; ?>
             </div>
             <?php else: ?>
-<<<<<<< HEAD
             <div style="color: #9ca3af; font-size: 0.85rem; font-style: italic;">Belum ada kategori rasa yang ditentukan.</div>
-=======
-            <div style="color: #9ca3af; font-size: 0.85rem; font-style: italic;">Belum ada kategori rasa yang
-              ditentukan.</div>
->>>>>>> fcfb940 (update)
             <?php endif; ?>
           </div>
         </div>
@@ -867,11 +862,7 @@ foreach ($waktuList as $w) {
 
         <!-- Waktu Operasional -->
         <div class="info-card">
-<<<<<<< HEAD
           <div class="info-card-title">🕒 Jam Operasional</div>
-=======
-          <div class="info-card-title"> Jam Operasional</div>
->>>>>>> fcfb940 (update)
           <?php if (empty($waktuList)): ?>
           <p style="color: #6b7280; font-style: italic; font-size: 0.88rem;">
             Jam operasional belum diatur untuk UMKM ini.
@@ -893,12 +884,7 @@ foreach ($waktuList as $w) {
               <span class="schedule-closed">🚫 Tutup / Libur</span>
               <?php else: ?>
               <span class="schedule-time">
-<<<<<<< HEAD
                 🟢 <?= date('H:i', strtotime($waktu['jam_buka'])) ?> - <?= date('H:i', strtotime($waktu['jam_tutup'])) ?> WIB
-=======
-                🟢 <?= date('H:i', strtotime($waktu['jam_buka'])) ?> -
-                <?= date('H:i', strtotime($waktu['jam_tutup'])) ?> WIB
->>>>>>> fcfb940 (update)
               </span>
               <?php endif; ?>
             </div>
@@ -914,11 +900,7 @@ foreach ($waktuList as $w) {
           <div class="payment-list">
             <?php foreach ($bayarList as $bayar): ?>
             <span class="payment-badge">
-<<<<<<< HEAD
               💵 <?= htmlspecialchars($bayar['metode_pembayaran']) ?>
-=======
-              <?= htmlspecialchars($bayar['metode_pembayaran']) ?>
->>>>>>> fcfb940 (update)
             </span>
             <?php endforeach; ?>
           </div>
@@ -928,11 +910,7 @@ foreach ($waktuList as $w) {
         <!-- Mitra Platform -->
         <?php if (!empty($mitraList)): ?>
         <div class="info-card">
-<<<<<<< HEAD
           <div class="info-card-title">🤝 Pesan Online</div>
-=======
-          <div class="info-card-title">Pesan Online</div>
->>>>>>> fcfb940 (update)
           <div class="mitra-list">
             <?php foreach ($mitraList as $mitra):
               $icon = $iconMitra[$mitra['nama_mitra']] ?? '📱';
@@ -990,8 +968,4 @@ foreach ($waktuList as $w) {
   </footer>
 </body>
 
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> fcfb940 (update)
