@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -672,3 +673,680 @@ body {
   font-size: 1.8rem;
   }
   }
+=======
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --hijau:#2e6b4f;
+  --hijau-muda:#52b788;
+  --hijau-terang:#95d5b2;
+  --krem:#fefae0;
+  --kuning:#dda15e;
+  --coklat:#bc6c25;
+  --putih:#ffffff;
+  --abu:#6b7280;
+  --gelap:#1a2e1e;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 40px;
+  --shadow-sm: 0 2px 8px rgba(45,106,79,.10);
+  --shadow-md: 0 6px 24px rgba(45,106,79,.15);
+  --shadow-lg: 0 16px 48px rgba(45,106,79,.20);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--krem);
+  color: var(--hijau-terang);
+  overflow-x:visible;
+}
+.navbar {
+
+  position:relative;
+  top: 0;
+  z-index: 100;
+  background: rgba(9, 27, 16, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(45,106,79,.12);
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.brand-icon { font-size: 1.6rem; }
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.brand-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--kuning);
+  letter-spacing: .5px;
+}
+
+.brand-sub {
+  font-size: .72rem;
+  font-weight: 500;
+  color: var(--kuning);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  margin-left: auto;
+}
+
+.nav-links a {
+  
+  text-decoration: none;
+  font-size: .9rem;
+  font-weight: 500;
+  color: var(--putih);
+  transition: color .2s;
+}
+
+.nav-links a:hover { color: var(--hijau); }
+
+.nav-actions { flex-shrink: 0; }
+.hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 64px 32px 48px;
+  display:grid;
+  grid-template-columns: 1fr 420px;
+  gap: 48px;
+  align-items: center;
+  position: relative;
+}
+
+.hero-bg-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(253, 255, 254, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(37, 65, 52, 0.15);
+  color: var(--hijau);
+  border: 1px solid rgba(82,183,136,.3);
+  padding: 6px 14px;
+  border-radius: var(--radius-xl);
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .3px;
+  margin-bottom: 20px;
+  animation: fadeDown .5s ease both;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--gelap);
+  margin-bottom: 16px;
+  animation: fadeDown .5s .1s ease both;
+}
+
+.highlight {
+  color: var(--hijau);
+  position: relative;
+}
+
+.highlight::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: rgba(202, 9, 9, 0.25);
+  border-radius: 4px;
+  z-index: -1;
+}
+
+.hero-desc {
+  font-size: .98rem;
+  color: var(--abu);
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 32px;
+  font-weight: 400;
+  animation: fadeDown .5s .2s ease both;
+}
+
+.search-wrap {
+  animation: fadeDown .5s .3s ease both;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--putih);
+  border: 2px solid rgba(45,106,79,.15);
+  border-radius: var(--radius-xl);
+  padding: 6px 6px 6px 18px;
+  box-shadow: var(--shadow-md);
+  transition: border-color .2s, box-shadow .2s;
+  max-width: 560px;
+}
+
+.search-bar:focus-within {
+  border-color: var(--hijau-muda);
+  box-shadow: 0 0 0 4px rgba(82,183,136,.15), var(--shadow-md);
+}
+
+.search-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--abu);
+  flex-shrink: 0;
+  margin-right: 10px;
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: .95rem;
+  color: var(--gelap);
+  background: transparent;
+  padding: 8px 0;
+}
+
+.search-bar input::placeholder { color: #145829; }
+
+.search-btn {
+  background: var(--hijau);
+  color: var(--putih);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-family: inherit;
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  white-space: nowrap;
+}
+
+.search-btn:hover {
+  background: var(--gelap);
+  transform: scale(1.02);
+}
+.search-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.search-tags span {
+  background: rgba(45,106,79,.08);
+  color: var(--hijau);
+  border: 1px solid rgba(45,106,79,.15);
+  padding: 5px 12px;
+  border-radius: var(--radius-xl);
+  font-size: .78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+
+.search-tags span:hover {
+  background: var(--hijau);
+  color: var(--putih);
+}
+
+.hero-visual {
+  position: relative;
+  height: 340px;
+}
+
+.hero-blob {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(82,183,136,.18) 0%, transparent 70%);
+  border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%;
+  animation: blobFloat 6s ease-in-out infinite;
+}
+
+.visual-card {
+  position: absolute;
+  background: var(--putih);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(45,106,79,.08);
+  animation: cardFloat ease-in-out infinite;
+}
+
+.card-emoji { font-size: 2rem; }
+
+.card-title {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--gelap);
+}
+
+.card-sub {
+  font-size: .75rem;
+  color: var(--abu);
+  margin-top: 2px;
+}
+.card-1 { top: 20px;  left: 20px;  animation-duration: 4s; animation-delay: 0s; }
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--hijau);
+}
+
+.stat-label {
+  font-size: .78rem;
+  color: var(--abu);
+  font-weight: 500;
+  text-align: center;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(45,106,79,.12);
+}
+
+.footer {
+  background: var(--gelap);
+  color: rgba(255,255,255,.6);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin:0 auto;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer .brand-name { color: var(--putih); }
+.footer .brand-icon { font-size: 1.4rem; }
+.footer-brand { display: flex; align-items: center; gap: 8px; }
+
+.footer-copy {
+  font-size: .8rem;
+  color: rgba(255,255,255,.45);
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.flavor-section {
+  padding: 56px 32px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.flavor-section-header {
+  text-align: left;
+  margin-bottom: 36px;
+}
+
+.flavor-section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8px;
+}
+
+.flavor-section-header p {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.flavor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+  .flavor-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 28px;
+    border-radius: 18px;
+    border: 2px solid transparent;
+    background: #fff;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    cursor: pointer;
+    transition: all 0.22s ease;
+    text-decoration: none;
+    min-width: 110px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flavor-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+    border-radius: 16px;
+  }
+
+  .flavor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.13);
+  }
+
+  /* Active / selected state */
+  .flavor-card.active {
+    border-color: var(--flavor-color);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--flavor-color) 30%, transparent);
+  }
+
+  .flavor-card.active .flavor-label {
+    color: var(--flavor-color);
+    font-weight: 600;
+  }
+
+  /* Per-rasa color variables */
+  .flavor-card[data-rasa="Asin"] {
+    --flavor-color: #3b82f6;
+  }
+
+  .flavor-card[data-rasa="Gurih"] {
+    --flavor-color: #f59e0b;
+  }
+
+  .flavor-card[data-rasa="Manis"] {
+    --flavor-color: #ec4899;
+  }
+
+  .flavor-card[data-rasa="Pedas"] {
+    --flavor-color: #ef4444;
+  }
+
+  .flavor-card[data-rasa="Asam"] {
+    --flavor-color: #22c55e;
+  }
+
+  .flavor-card[data-rasa="Asin"].active {
+    background: #eff6ff;
+  }
+
+  .flavor-card[data-rasa="Gurih"].active {
+    background: #fffbeb;
+  }
+
+  .flavor-card[data-rasa="Manis"].active {
+    background: #fdf2f8;
+  }
+
+  .flavor-card[data-rasa="Pedas"].active {
+    background: #fef2f2;
+  }
+
+  .flavor-card[data-rasa="Asam"].active {
+    background: #f0fdf4;
+  }
+
+  .flavor-emoji {
+    font-size: 2.2rem;
+    line-height: 1;
+    transition: transform 0.2s ease;
+  }
+
+  .flavor-card:hover .flavor-emoji {
+    transform: scale(1.15) rotate(-5deg);
+  }
+
+  .flavor-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151;
+    transition: color 0.22s ease;
+  }
+
+  .flavor-card-badge {
+    font-size: 0.7rem;
+    background: #f3f4f6;
+    color: #6b7280;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+    /* ===== HASIL PENCARIAN / PRODUK CARDS ===== */
+  .results-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+  }
+
+  .results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  }
+
+  .results-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1rem;
+  color: #6b7280;
+  }
+
+  .results-title span {
+  font-weight: 600;
+  color: #1a1a2e;
+  }
+
+  .results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  }
+
+  .product-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.11);
+  }
+
+  .product-card-top {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  }
+
+  .product-card-body {
+  padding: 14px 16px;
+  }
+
+  .product-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  color: #1a1a2e;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+  }
+
+  .product-umkm {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-bottom: 8px;
+  }
+
+  .product-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  }
+
+  .product-tag {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .tag-rasa-Asin {
+  background: #dbeafe;
+  color: #1d4ed8;
+  }
+
+  .tag-rasa-Gurih {
+  background: #fef3c7;
+  color: #b45309;
+  }
+
+  .tag-rasa-Manis {
+  background: #fce7f3;
+  color: #be185d;
+  }
+
+  .tag-rasa-Pedas {
+  background: #fee2e2;
+  color: #b91c1c;
+  }
+
+  .tag-rasa-Asam {
+  background: #dcfce7;
+  color: #15803d;
+  }
+
+  .product-harga {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #f59e0b;
+  margin-top: 8px;
+  }
+
+  /* Empty state */
+  .empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #9ca3af;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  grid-column: 1 / -1;
+  }
+
+  .empty-state .empty-emoji {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  }
+
+  .empty-state p {
+  font-size: 0.95rem;
+  }
+
+  /* Loading */
+  .loading-spinner {
+  text-align: center;
+  padding: 40px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #6b7280;
+  font-size: 0.9rem;
+  grid-column: 1 / -1;
+  }
+
+  /* Reset filter chip */
+  .reset-filter {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.15s;
+  display: none;
+  }
+
+  .reset-filter.visible {
+  display: inline-block;
+  }
+
+  .reset-filter:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  color: #374151;
+  }
+
+  @media (max-width: 640px) {
+  .flavor-card {
+  min-width: 88px;
+  padding: 16px 18px;
+  }
+
+  .flavor-emoji {
+  font-size: 1.8rem;
+  }
+  }
+  
+>>>>>>> fcfb940 (update)
