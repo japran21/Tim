@@ -134,6 +134,38 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     max-width: 100%;
   }
 
+  /* hero jadi 1 kolom center */
+  .main-content .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+    padding: 48px 32px 40px;
+  }
+
+  .main-content .hero-visual {
+    display: none;
+  }
+
+  .main-content .hero-badge {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .main-content .hero-desc {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .main-content .search-wrap {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .main-content .search-suggestions {
+    justify-content: center;
+  }
+
   /* ===== CENTERING ALL SECTIONS ===== */
   .flavor-section,
   .kategori-section,
@@ -142,6 +174,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
 
   .flavor-section-header {
@@ -156,16 +189,33 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     width: 100%;
   }
 
+  .asal-section {
+    padding: 0 32px 56px;
+  }
+
+  .asal-section-header,
+  .asal-grid {
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .asal-section-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
   .asal-grid {
     justify-content: center;
-    max-width: 900px;
-    width: 100%;
+  }
+
+  .results-section {
+    padding: 0 32px 60px;
   }
 
   .results-header,
   .results-grid {
     width: 100%;
-    max-width: 900px;
+    max-width: 860px;
   }
 
   /* ===== KATEGORI SECTION ===== */

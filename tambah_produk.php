@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $errors = [];
     if ($id_umkm <= 0) $errors[] = 'Pilih UMKM terlebih dahulu';
     if (empty($nama_produk)) $errors[] = 'Nama produk tidak boleh kosong';
-    if ($harga <= 0) $errors[] = 'Harga harus lebih dari 0';
+    if ($harga < 0) $errors[] = 'Harga tidak boleh minus';
     if (empty($kategori_produk)) $errors[] = 'Kategori produk tidak boleh kosong';
     
     if (empty($errors)) {
@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-row">
           <div class="form-group">
             <label for="harga">Harga (Rp) *</label>
-            <input type="number" id="harga" name="harga" placeholder="10000" step="500" required>
+            <input type="number" id="harga" name="harga" placeholder="10000" step="500" min="0" required>
           </div>
 
           <div class="form-group">
