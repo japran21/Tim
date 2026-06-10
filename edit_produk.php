@@ -27,12 +27,13 @@ if (mysqli_num_rows($result) == 0) {
 
 $produk = mysqli_fetch_assoc($result);
 
-// Ambil data UMKM untuk dropdown
+// Ambil data UMKM
 $query_umkm = "SELECT id_umkm, nama_umkm FROM umkm ORDER BY nama_umkm";
 $result_umkm = mysqli_query($koneksi, $query_umkm);
 
 $error = '';
 
+/* ================== POST (SUDAH DIGABUNG + ROLLBACK) ================== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_umkm = (int)$_POST['id_umkm'];
     $nama_produk = trim($_POST['nama_produk']);
@@ -47,23 +48,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($kategori_produk)) $errors[] = 'Kategori produk tidak boleh kosong';
     
     if (empty($errors)) {
-        $asal = $asal_daerah ? "'" . mysqli_real_escape_string($koneksi, $asal_daerah) . "'" : "NULL";
-        $update = "UPDATE produk 
-                   SET id_umkm = $id_umkm, 
-                       nama_produk = '$nama_produk', 
-                       harga = $harga, 
-                       kategori_produk = '$kategori_produk', 
-                       asal_daerah = $asal 
-                   WHERE id_produk = $id_produk";
-        
-        if (mysqli_query($koneksi, $update)) {
+
+        mysqli_begin_transaction($koneksi);
+
+        try {
+            // 🔥 Ambil harga lama
+            $q = mysqli_query($koneksi, "SELECT harga FROM produk WHERE id_produk = $id_produk");
+            $old = mysqli_fetch_assoc($q);
+            $harga_lama = $old['harga'];
+
+            // 🔥 Validasi kenaikan max 50%
+            if ($harga > ($harga_lama * 1.5)) {
+                throw new Exception("Harga tidak boleh naik lebih dari 50%");
+            }
+
+            $asal = $asal_daerah ? "'" . mysqli_real_escape_string($koneksi, $asal_daerah) . "'" : "NULL";
+
+            // 🔥 Update
+            $update = "UPDATE produk 
+                       SET id_umkm = $id_umkm, 
+                           nama_produk = '$nama_produk', 
+                           harga = $harga, 
+                           kategori_produk = '$kategori_produk', 
+                           asal_daerah = $asal 
+                       WHERE id_produk = $id_produk";
+
+            mysqli_query($koneksi, $update);
+
+            // ✅ Commit
+            mysqli_commit($koneksi);
+
             $_SESSION['message'] = 'Produk "' . htmlspecialchars($nama_produk) . '" berhasil diupdate!';
             $_SESSION['message_type'] = 'success';
             header('Location: produk.php');
             exit;
-        } else {
-            $error = 'Gagal mengupdate data: ' . mysqli_error($koneksi);
+
+        } catch (Exception $e) {
+
+            // ❌ Rollback
+            mysqli_rollback($koneksi);
+
+            $error = "Update dibatalkan: " . $e->getMessage();
         }
+
     } else {
         $error = implode('<br>', $errors);
     }

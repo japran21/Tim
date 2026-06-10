@@ -340,11 +340,11 @@ $colorMitra = [
     .container {
       grid-template-columns: 1fr;
     }
-    
+
     .back-btn-container {
       grid-column: span 1;
     }
-    
+
     .product-grid {
       grid-template-columns: 1fr;
     }
@@ -390,7 +390,7 @@ $colorMitra = [
           <?php endif; ?>
 
           <h2 class="profile-name"><?= htmlspecialchars($umkm['nama_umkm']) ?></h2>
-          
+
           <?php
           $status_class = '';
           if ($umkm['status_halal'] == 'Halal Bersertifikat') {
@@ -445,7 +445,8 @@ $colorMitra = [
           <div class="info-item">
             <div style="text-align: left;">
               <div class="info-label">TANGGAL TERBIT</div>
-              <div class="info-val"><?= $umkm['tanggal_terbit'] ? date('d-m-Y', strtotime($umkm['tanggal_terbit'])) : '-' ?></div>
+              <div class="info-val">
+                <?= $umkm['tanggal_terbit'] ? date('d-m-Y', strtotime($umkm['tanggal_terbit'])) : '-' ?></div>
             </div>
           </div>
         </div>
@@ -460,7 +461,8 @@ $colorMitra = [
         <div class="card-title">🕒 Jam Operasional Mingguan</div>
         <div>
           <?php if (empty($waktuList)): ?>
-          <p style="color: #6b7280; font-style: italic;">Jam operasional belum diatur untuk UMKM ini. <a href="waktu_operasional.php?id_umkm=<?= $id_umkm ?>">Atur sekarang</a>.</p>
+          <p style="color: #6b7280; font-style: italic;">Jam operasional belum diatur untuk UMKM ini. <a
+              href="waktu_operasional.php?id_umkm=<?= $id_umkm ?>">Atur sekarang</a>.</p>
           <?php else: ?>
           <?php foreach ($waktuList as $waktu): 
               $isTutup = $waktu['keterangan'] === 'Tutup';
@@ -471,7 +473,8 @@ $colorMitra = [
             <span class="schedule-closed">🚫 Tutup / Libur</span>
             <?php else: ?>
             <span class="schedule-time">
-              🟢 <?= date('H:i', strtotime($waktu['jam_buka'])) ?> - <?= date('H:i', strtotime($waktu['jam_tutup'])) ?> WIB
+              🟢 <?= date('H:i', strtotime($waktu['jam_buka'])) ?> - <?= date('H:i', strtotime($waktu['jam_tutup'])) ?>
+              WIB
             </span>
             <?php endif; ?>
           </div>
@@ -485,10 +488,12 @@ $colorMitra = [
         <div class="card-title">🍽️ Menu & Produk (<?= count($produkList) ?>)</div>
         <div class="product-grid">
           <?php if (empty($produkList)): ?>
-          <p style="color: #6b7280; font-style: italic; grid-column: span 2;">Belum ada produk yang didaftarkan untuk UMKM ini.</p>
+          <p style="color: #6b7280; font-style: italic; grid-column: span 2;">Belum ada produk yang didaftarkan untuk
+            UMKM ini.</p>
           <?php else: ?>
           <?php foreach ($produkList as $produk): ?>
-          <a href="detail_produk.php?id=<?= $produk['id_produk'] ?>" class="product-card" style="text-decoration:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
+          <a href="detail_produk.php?id=<?= $produk['id_produk'] ?>" class="product-card"
+            style="text-decoration:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
             <div class="product-detail">
               <span class="product-category">
                 <?php 
@@ -501,9 +506,10 @@ $colorMitra = [
               </span>
               <h4><?= htmlspecialchars($produk['nama_produk']) ?></h4>
               <?php if ($produk['asal_daerah']): ?>
-              <span style="font-size: 0.75rem; color: #6b7280; display: block; margin-top: 2px;">📍 Asal: <?= htmlspecialchars($produk['asal_daerah']) ?></span>
+              <span style="font-size: 0.75rem; color: #6b7280; display: block; margin-top: 2px;">📍 Asal:
+                <?= htmlspecialchars($produk['asal_daerah']) ?></span>
               <?php endif; ?>
-              
+
               <?php if ($produk['daftar_rasa']): ?>
               <div class="product-flavor-tags">
                 <?php foreach (explode(', ', $produk['daftar_rasa']) as $rasa): ?>
@@ -532,7 +538,8 @@ $colorMitra = [
               $icon = $iconMitra[$mitra['nama_mitra']] ?? '📱';
               $color = $colorMitra[$mitra['nama_mitra']] ?? '#4b5563';
           ?>
-          <a href="<?= htmlspecialchars($mitra['link_mitra'] ?: '#') ?>" target="_blank" class="mitra-btn" style="background: <?= $color ?>;">
+          <a href="<?= htmlspecialchars($mitra['link_mitra'] ?: '#') ?>" target="_blank" class="mitra-btn"
+            style="background: <?= $color ?>;">
             <span><?= $icon ?> Pesan via <?= htmlspecialchars($mitra['nama_mitra']) ?></span>
             <span>Buka Aplikasi ➔</span>
           </a>

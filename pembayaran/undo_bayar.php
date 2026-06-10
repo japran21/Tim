@@ -11,7 +11,7 @@
  */
 
 session_start();
-require_once '../koneksi.php';
+require_once 'koneksi.php';
 
 // Validasi parameter
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

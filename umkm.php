@@ -573,7 +573,7 @@ $total_pages = ceil($total_data / $limit);
   function confirmDelete(id, nama) {
     if (confirm(
         `Apakah Anda yakin ingin menghapus UMKM "${nama}"?\n\nSemua produk dan data terkait UMKM ini juga akan terhapus.`
-        )) {
+      )) {
       window.location.href = `hapus_umkm.php?id=${id}`;
     }
   }

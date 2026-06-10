@@ -69,31 +69,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($lokasi)) $errors[] = 'Lokasi tidak boleh kosong';
     
     if (empty($errors)) {
-        $foto_sql = $foto ? "'$foto'" : "NULL";
-        $kontak_sql = $nomor_kontak ? "'$nomor_kontak'" : "NULL";
-        $no_sertifikat_sql = $no_sertifikat ? "'$no_sertifikat'" : "NULL";
-        $lembaga_sql = $lembaga_penerbit ? "'$lembaga_penerbit'" : "NULL";
-        $tgl_sql = $tanggal_terbit ? "'$tanggal_terbit'" : "NULL";
-        
-        $query_update = "UPDATE umkm SET 
-            nama_umkm = '$nama_umkm', 
-            lokasi = '$lokasi', 
-            foto = $foto_sql, 
-            nomor_kontak = $kontak_sql, 
-            status_halal = '$status_halal', 
-            no_sertifikat = $no_sertifikat_sql, 
-            lembaga_penerbit = $lembaga_sql, 
-            tanggal_terbit = $tgl_sql 
-            WHERE id_umkm = $id_umkm";
-            
-        if (mysqli_query($koneksi, $query_update)) {
+        // Simpan data lama untuk keperluan rollback file foto
+        $foto_lama = $umkm['foto'];
+        $foto_baru_diupload = ($foto !== $foto_lama); // true jika ada foto baru
+
+        // ── TRANSACTION: BEGIN ──────────────────────────────────────────────
+        try {
+            if ($pdo === null) {
+                throw new Exception('Koneksi PDO tidak tersedia.');
+            }
+
+            $pdo->beginTransaction();
+
+            $stmt = $koneksi->prepare("UPDATE umkm SET 
+                nama_umkm       = :nama_umkm,
+                lokasi          = :lokasi,
+                foto            = :foto,
+                nomor_kontak    = :nomor_kontak,
+                status_halal    = :status_halal,
+                no_sertifikat   = :no_sertifikat,
+                lembaga_penerbit= :lembaga_penerbit,
+                tanggal_terbit  = :tanggal_terbit
+                WHERE id_umkm   = :id_umkm");
+
+            $stmt->bind_param([
+                ':nama_umkm'        => $nama_umkm,
+                ':lokasi'           => $lokasi,
+                ':foto'             => $foto ?: null,
+                ':nomor_kontak'     => $nomor_kontak,
+                ':status_halal'     => $status_halal,
+                ':no_sertifikat'    => $no_sertifikat,
+                ':lembaga_penerbit' => $lembaga_penerbit,
+                ':tanggal_terbit'   => $tanggal_terbit,
+                ':id_umkm'          => $id_umkm,
+            ]);
+            $stmt->execute();
+
+            // Pastikan tepat 1 baris yang berubah
+            if ($stmt->rowCount() < 0) {
+                throw new Exception('Tidak ada baris yang diperbarui di database.');
+            }
+
+            // ── COMMIT ──────────────────────────────────────────────────────
+            $koneksi->commit();
+
             $_SESSION['message'] = 'Data UMKM "' . htmlspecialchars($nama_umkm) . '" berhasil diperbarui!';
             $_SESSION['message_type'] = 'success';
             header('Location: umkm.php');
             exit;
-        } else {
-            $error = 'Gagal memperbarui data: ' . mysqli_error($koneksi);
+
+        } catch (Exception $e) {
+            // ── ROLLBACK ────────────────────────────────────────────────────
+           $koneksi->rollback();
+
+            // Jika foto baru sudah terlanjur diupload, hapus agar tidak jadi sampah
+            if ($foto_baru_diupload && $foto && file_exists($foto)) {
+                unlink($foto);
+            }
+
+            // Kembalikan referensi foto ke foto lama
+            $foto = $foto_lama;
+
+            error_log('edit_umkm rollback: ' . $e->getMessage());
+            $error = 'Gagal memperbarui data. Perubahan telah dibatalkan (rollback). '
+                   . 'Silakan coba lagi atau hubungi administrator.';
         }
+        // ── END TRANSACTION ─────────────────────────────────────────────────
+
     } else {
         $error = implode('<br>', $errors);
     }
@@ -286,7 +328,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <form method="POST" action="" enctype="multipart/form-data">
         <div class="form-group">
           <label for="nama_umkm">Nama UMKM *</label>
-          <input type="text" id="nama_umkm" name="nama_umkm" value="<?= htmlspecialchars($umkm['nama_umkm']) ?>" required>
+          <input type="text" id="nama_umkm" name="nama_umkm" value="<?= htmlspecialchars($umkm['nama_umkm']) ?>"
+            required>
         </div>
 
         <div class="form-group">
@@ -297,7 +340,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-row">
           <div class="form-group">
             <label for="nomor_kontak">Nomor Kontak</label>
-            <input type="text" id="nomor_kontak" name="nomor_kontak" value="<?= htmlspecialchars($umkm['nomor_kontak'] ?? '') ?>" placeholder="6281234567890">
+            <input type="text" id="nomor_kontak" name="nomor_kontak"
+              value="<?= htmlspecialchars($umkm['nomor_kontak'] ?? '') ?>" placeholder="6281234567890">
           </div>
 
           <div class="form-group">
@@ -315,8 +359,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-group">
           <label for="status_halal">Status Halal *</label>
           <select id="status_halal" name="status_halal" required>
-            <option value="Halal Bersertifikat" <?= $umkm['status_halal'] === 'Halal Bersertifikat' ? 'selected' : '' ?>>Halal Bersertifikat</option>
-            <option value="Halal Belum Bersertifikat" <?= $umkm['status_halal'] === 'Halal Belum Bersertifikat' ? 'selected' : '' ?>>Halal Belum Bersertifikat</option>
+            <option value="Halal Bersertifikat"
+              <?= $umkm['status_halal'] === 'Halal Bersertifikat' ? 'selected' : '' ?>>Halal Bersertifikat</option>
+            <option value="Halal Belum Bersertifikat"
+              <?= $umkm['status_halal'] === 'Halal Belum Bersertifikat' ? 'selected' : '' ?>>Halal Belum Bersertifikat
+            </option>
             <option value="Non-Halal" <?= $umkm['status_halal'] === 'Non-Halal' ? 'selected' : '' ?>>Non-Halal</option>
           </select>
         </div>
@@ -324,12 +371,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="form-row" id="sertifikat_fields">
           <div class="form-group">
             <label for="no_sertifikat">No Sertifikat Halal</label>
-            <input type="text" id="no_sertifikat" name="no_sertifikat" value="<?= htmlspecialchars($umkm['no_sertifikat'] ?? '') ?>" placeholder="ID32110016944470224">
+            <input type="text" id="no_sertifikat" name="no_sertifikat"
+              value="<?= htmlspecialchars($umkm['no_sertifikat'] ?? '') ?>" placeholder="ID32110016944470224">
           </div>
 
           <div class="form-group">
             <label for="lembaga_penerbit">Lembaga Penerbit</label>
-            <input type="text" id="lembaga_penerbit" name="lembaga_penerbit" value="<?= htmlspecialchars($umkm['lembaga_penerbit'] ?? '') ?>" placeholder="BPJPH / MUI">
+            <input type="text" id="lembaga_penerbit" name="lembaga_penerbit"
+              value="<?= htmlspecialchars($umkm['lembaga_penerbit'] ?? '') ?>" placeholder="BPJPH / MUI">
           </div>
 
           <div class="form-group">
