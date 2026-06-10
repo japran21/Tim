@@ -556,15 +556,15 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         <div class="asal-grid">
           <?php
           $flagMap = [
-            'Bandung'=>'🏔️','Garut'=>'🌿','Cirebon'=>'🦐','Madura'=>'🐄',
-            'Padang'=>'🥘','Yogyakarta'=>'🏛️','Solo'=>'🎭','Wonogiri'=>'🍖',
-            'Makassar'=>'🦈','Bangka'=>'🏝️',
+            'Bandung'=>'','Garut'=>'','Cirebon'=>'','Madura'=>'',
+            'Padang'=>'','Yogyakarta'=>'','Solo'=>'','Wonogiri'=>'',
+            'Makassar'=>'','Bangka'=>'',
           ];
           foreach ($asalList as $asal):
               $nama  = htmlspecialchars($asal['asal_daerah']);
               $total = $asal['total'];
               $kota  = explode(',', $asal['asal_daerah'])[0];
-              $icon  = '📍';
+              $icon  = '';
               foreach ($flagMap as $key => $em) {
                   if (stripos($kota, $key) !== false) { $icon = $em; break; }
               }
