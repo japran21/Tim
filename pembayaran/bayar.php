@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'koneksi.php';
+require_once '../koneksi.php';
 
 // Pesan notifikasi
 $message = '';
@@ -16,6 +16,18 @@ if (isset($_SESSION['message'])) {
 // Ambil semua data metode pembayaran
 $query = "SELECT * FROM metode_pembayaran ORDER BY id_metode ASC";
 $result = mysqli_query($koneksi, $query);
+
+// Ambil data transaksi pembayaran UMKM (untuk fitur undo)
+$query_transaksi = "
+    SELECT up.id_umkm_bayar,
+           u.nama_umkm,
+           mp.nama_metode
+    FROM   umkm_pembayaran   up
+    JOIN   umkm              u  ON u.id_umkm   = up.id_umkm
+    JOIN   metode_pembayaran mp ON mp.id_metode = up.id_metode
+    ORDER  BY up.id_umkm_bayar DESC
+";
+$result_transaksi = mysqli_query($koneksi, $query_transaksi);
 ?>
 
 <!DOCTYPE html>
@@ -181,6 +193,26 @@ $result = mysqli_query($koneksi, $query);
     margin-right: 8px;
     vertical-align: middle;
   }
+
+  .btn-undo {
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1.5px solid #fed7aa;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .btn-undo:hover {
+    background: #ffedd5;
+    border-color: #fb923c;
+  }
   </style>
 </head>
 
@@ -268,6 +300,54 @@ $result = mysqli_query($koneksi, $query);
       </table>
     </div>
 
+    <!-- ══ SECTION: Undo / Rollback Transaksi Pembayaran ══ -->
+    <div class="admin-header" style="margin-top: 48px;">
+      <h2 style="font-family:'Playfair Display',serif;color:#1a1a2e;font-size:1.5rem;">
+        🔄 Undo Transaksi Pembayaran UMKM
+      </h2>
+    </div>
+    <p style="color:#6b7280;margin-bottom:20px;">
+      Tabel ini menampilkan semua data pembayaran yang sudah tercatat.
+      Klik <strong>Undo</strong> untuk membatalkan (rollback) transaksi — data akan dihapus dan dicatat di log audit.
+    </p>
+
+    <div class="payment-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID Transaksi</th>
+            <th>Nama UMKM</th>
+            <th>Metode Pembayaran</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php if ($result_transaksi && mysqli_num_rows($result_transaksi) > 0): ?>
+          <?php while ($trx = mysqli_fetch_assoc($result_transaksi)): ?>
+          <tr>
+            <td>#<?= $trx['id_umkm_bayar'] ?></td>
+            <td><?= htmlspecialchars($trx['nama_umkm']) ?></td>
+            <td><?= htmlspecialchars($trx['nama_metode']) ?></td>
+            <td>
+              <button
+                onclick="confirmUndo(<?= $trx['id_umkm_bayar'] ?>, '<?= htmlspecialchars($trx['nama_umkm'], ENT_QUOTES) ?>', '<?= htmlspecialchars($trx['nama_metode'], ENT_QUOTES) ?>')"
+                class="btn-undo">
+                ↩️ Undo
+              </button>
+            </td>
+          </tr>
+          <?php endwhile; ?>
+          <?php else: ?>
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">📭 Tidak ada data transaksi pembayaran</div>
+            </td>
+          </tr>
+          <?php endif; ?>
+        </tbody>
+      </table>
+    </div>
+
     <a href="index.php" class="back-link">← Kembali ke Beranda</a>
   </div>
 
@@ -282,10 +362,18 @@ $result = mysqli_query($koneksi, $query);
   </footer>
 
   <script>
+  function confirmUndo(id, namaUmkm, namaMetode) {
+    if (confirm(
+        `⚠️ KONFIRMASI ROLLBACK TRANSAKSI\n\nUMKM     : ${namaUmkm}\nMetode   : ${namaMetode}\nID Trx   : #${id}\n\nData pembayaran ini akan DIHAPUS dan dicatat di log audit.\nLanjutkan?`
+      )) {
+      window.location.href = `undo_bayar.php?id=${id}`;
+    }
+  }
+
   function confirmDelete(id, nama) {
     if (confirm(
         `Apakah Anda yakin ingin menghapus metode pembayaran "${nama}"?\n\nData UMKM yang menggunakan metode ini akan terpengaruh.`
-        )) {
+      )) {
       window.location.href = `hapus_bayar.php?id=${id}`;
     }
   }

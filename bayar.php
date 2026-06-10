@@ -288,7 +288,7 @@ $result = mysqli_query($koneksi, $query);
   function confirmDelete(id, nama) {
     if (confirm(
         `Apakah Anda yakin ingin menghapus metode pembayaran "${nama}"?\n\nData UMKM yang menggunakan metode ini akan terpengaruh.`
-        )) {
+      )) {
       window.location.href = `hapus_bayar.php?id=${id}`;
     }
   }
