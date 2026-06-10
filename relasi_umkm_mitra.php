@@ -12,7 +12,7 @@ if (isset($_SESSION['message'])) {
 }
 
 // Proses update relasi via POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_mitra') {l
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_mitra') {
     $id_umkm  = (int)$_POST['id_umkm'];
     $mitra_ids = isset($_POST['mitra_ids']) ? $_POST['mitra_ids'] : [];
     $links     = isset($_POST['links'])     ? $_POST['links']     : [];
