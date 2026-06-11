@@ -237,7 +237,7 @@ $result_transaksi = mysqli_query($koneksi, $query_transaksi);
 
   <div class="admin-container">
     <div class="admin-header">
-      <h1>💰 Manajemen Metode Pembayaran</h1>
+      <h1> Manajemen Metode Pembayaran</h1>
       <a href="tambah_bayar.php" class="btn-tambah">+ Tambah Metode Baru</a>
     </div>
 
@@ -269,7 +269,7 @@ $result_transaksi = mysqli_query($koneksi, $query_transaksi);
                             'LinkAja' => '🔵'
                         ];
                         while ($row = mysqli_fetch_assoc($result)): 
-                            $icon = $iconMap[$row['nama_metode']] ?? '💰';
+                            $icon = $iconMap[$row['nama_metode']] ?? '';
                         ?>
           <tr>
             <td><?= $row['id_metode'] ?></td>

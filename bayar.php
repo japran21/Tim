@@ -208,7 +208,7 @@ $result = mysqli_query($koneksi, $query);
 
   <div class="admin-container">
     <div class="admin-header">
-      <h1>💰 Manajemen Metode Pembayaran</h1>
+      <h1>Manajemen Metode Pembayaran</h1>
       <a href="tambah_bayar.php" class="btn-tambah">+ Tambah Metode Baru</a>
     </div>
 

@@ -695,11 +695,11 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   <script>
   const emojiMap = {
-    'Asin': '🧂',
-    'Gurih': '🍗',
-    'Manis': '🍯',
-    'Pedas': '🌶️',
-    'Asam': '🍋'
+    'Asin': '',
+    'Gurih': '',
+    'Manis': '',
+    'Pedas': '',
+    'Asam': ''
   };
   const kategoriEmojiMap = {
     'Makanan': '🍜',
@@ -739,7 +739,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     activeHarga = label;
     document.querySelectorAll('.harga-preset-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
-    showResults('💰 Harga <strong>' + escHtml(label) + '</strong>');
+    showResults('Harga <strong>' + escHtml(label) + '</strong>');
     const maxParam = max >= 50000 ? 9999999 : max;
     fetchAndRender('get_produk.php?harga_min=' + min + '&harga_max=' + maxParam, label, 'harga');
   }
