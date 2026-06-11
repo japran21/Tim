@@ -940,7 +940,7 @@ foreach ($waktuList as $w) {
           <div class="payment-list">
             <?php foreach ($bayarList as $bayar): ?>
             <span class="payment-badge">
-              💵 <?= htmlspecialchars($bayar['metode_pembayaran']) ?>
+              <?= htmlspecialchars($bayar['metode_pembayaran']) ?>
             </span>
             <?php endforeach; ?>
           </div>

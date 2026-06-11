@@ -262,7 +262,7 @@ $result = mysqli_query($koneksi, $query);
     <div class="admin-header">
       <h1>Mitra Platform</h1>
       <div style="display: flex; gap: 12px;">
-        <a href="relasi_umkm_mitra.php" class="btn-relasi">🔗 Kelola Relasi UMKM-Mitra</a>
+        <a href="relasi_mitra_umkm.php" class="btn-relasi">🔗 Kelola Relasi UMKM-Mitra</a>
         <a href="tambah_mitra.php" class="btn-tambah">+ Tambah Mitra Baru</a>
       </div>
     </div>
@@ -300,7 +300,6 @@ $result = mysqli_query($koneksi, $query);
             <th>ID</th>
             <th>Nama Mitra</th>
             <th>Icon</th>
-            <th>Warna</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -308,12 +307,12 @@ $result = mysqli_query($koneksi, $query);
           <?php if ($total_mitra > 0): ?>
           <?php 
                         $iconMap = [
-                            'GoFood' => '',
-                            'GrabFood' => '',
-                            'ShopeeFood' => '',
-                            'Gojek' => '',
-                            'Grab' => '',
-                            'Shopee' => ''
+                            'GoFood' => '🟢',
+                            'GrabFood' => '🟠',
+                            'ShopeeFood' => '🟡',
+                            'Gojek' => '🟢',
+                            'Grab' => '🟠',
+                            'Shopee' => '🟡'
                         ];
                         $colorMap = [
                             'GoFood' => '#00b14f',
@@ -330,11 +329,6 @@ $result = mysqli_query($koneksi, $query);
               <strong><?= htmlspecialchars($row['nama_mitra']) ?></strong>
             </td>
             <td style="font-size: 1.5rem;"><?= $icon ?></td>
-            <td>
-              <span
-                style="display: inline-block; width: 20px; height: 20px; background: <?= $color ?>; border-radius: 50%;"></span>
-              <?= $color ?>
-            </td>
             <td>
               <div class="action-buttons">
                 <a href="edit_mitra.php?id=<?= $row['id_mitra'] ?>" class="btn-edit">✏️ Edit</a>
