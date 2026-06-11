@@ -177,8 +177,45 @@ if (!empty($_GET['rasa'])) {
         exit;
     }
 
+} elseif (isset($_GET['harga_min']) || isset($_GET['harga_max'])) {
+    $harga_min = isset($_GET['harga_min']) ? (int) $_GET['harga_min'] : 0;
+    $harga_max = isset($_GET['harga_max']) ? (int) $_GET['harga_max'] : 9999999;
+
+    $sql = "
+        SELECT
+            p.id_produk,
+            p.nama_produk,
+            p.harga,
+            p.kategori_produk,
+            p.asal_daerah,
+            u.nama_umkm,
+            u.foto,
+            GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa
+        FROM produk p
+        JOIN umkm u  ON p.id_umkm = u.id_umkm
+        LEFT JOIN produk_rasa pr  ON p.id_produk = pr.id_produk
+        LEFT JOIN kategori_rasa kr ON pr.id_rasa  = kr.id_rasa
+        WHERE p.harga BETWEEN $harga_min AND $harga_max
+        GROUP BY p.id_produk, u.nama_umkm, u.foto
+        ORDER BY p.harga ASC
+        LIMIT 100
+    ";
+
+    $query = mysqli_query($koneksi, $sql);
+    if ($query) {
+        while ($row = mysqli_fetch_assoc($query)) {
+            $row['foto']  = sanitasiFoto($row['foto']);
+            $row['harga'] = (float) $row['harga'];
+            $result[]     = $row;
+        }
+    } else {
+        error_log("get_produk.php [harga] query error: " . mysqli_error($koneksi));
+        echo json_encode(['error' => 'Terjadi kesalahan saat mengambil data.']);
+        exit;
+    }
+
 } else {
-    echo json_encode(['error' => 'Parameter tidak ditemukan. Gunakan ?rasa=, ?keyword=, ?kategori=, atau ?asal_daerah=']);
+    echo json_encode(['error' => 'Parameter tidak ditemukan. Gunakan ?rasa=, ?keyword=, ?kategori=, ?asal_daerah=, atau ?harga_min=&harga_max=']);
     exit;
 }
 

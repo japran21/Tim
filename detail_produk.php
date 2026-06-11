@@ -65,12 +65,14 @@ while ($row = mysqli_fetch_assoc($resultWaktu)) {
 // 4. Ambil produk lain dari UMKM yang sama (untuk "Produk Lainnya")
 $queryLainnya = "
     SELECT p.id_produk, p.nama_produk, p.harga, p.kategori_produk,
-           GROUP_CONCAT(kr.jenis_rasa SEPARATOR ', ') as daftar_rasa
+           GROUP_CONCAT(kr.jenis_rasa SEPARATOR ', ') as daftar_rasa,
+           u.foto
     FROM produk p
+    JOIN umkm u ON p.id_umkm = u.id_umkm
     LEFT JOIN produk_rasa pr ON p.id_produk = pr.id_produk
     LEFT JOIN kategori_rasa kr ON pr.id_rasa = kr.id_rasa
     WHERE p.id_umkm = $id_umkm AND p.id_produk != $id_produk
-    GROUP BY p.id_produk
+    GROUP BY p.id_produk, u.foto
     ORDER BY p.nama_produk ASC
     LIMIT 6
 ";
@@ -234,6 +236,18 @@ foreach ($waktuList as $w) {
     font-size: 6rem;
     position: relative;
     overflow: hidden;
+  }
+
+  .product-hero-top .hero-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+  }
+
+  .product-hero-card:hover .product-hero-top .hero-foto {
+    transform: scale(1.04);
   }
 
   .product-hero-top::before {
@@ -631,6 +645,19 @@ foreach ($waktuList as $w) {
     align-items: center;
     justify-content: center;
     font-size: 2.4rem;
+    overflow: hidden;
+  }
+
+  .other-card-top .other-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s ease;
+  }
+
+  .other-product-card:hover .other-card-top .other-foto {
+    transform: scale(1.06);
   }
 
   .other-card-body {
@@ -771,7 +798,17 @@ foreach ($waktuList as $w) {
       <div class="product-visual">
         <div class="product-hero-card">
           <div class="product-hero-top">
+            <?php
+              $fotoPath = $produk['foto'] ?? '';
+              // strip prefix jika masih ada
+              $fotoPath = ltrim(str_replace('FOTO_UMKM/', '', $fotoPath), '/');
+            ?>
+            <?php if ($fotoPath && file_exists('FOTO_UMKM/' . $fotoPath)): ?>
+            <img src="FOTO_UMKM/<?= htmlspecialchars($fotoPath) ?>" class="hero-foto"
+              alt="<?= htmlspecialchars($produk['nama_umkm']) ?>">
+            <?php else: ?>
             <?= $emojiKategori[$produk['kategori_produk']] ?? '🍿' ?>
+            <?php endif; ?>
           </div>
           <div class="product-hero-body">
             <span class="product-kategori-badge">
@@ -938,9 +975,17 @@ foreach ($waktuList as $w) {
       <div class="other-products-grid">
         <?php foreach ($produkLainnya as $lain):
           $emojiLain = $emojiKategori[$lain['kategori_produk']] ?? '🍿';
+          $lainFoto  = ltrim(str_replace('FOTO_UMKM/', '', $lain['foto'] ?? ''), '/');
         ?>
         <a href="detail_produk.php?id=<?= $lain['id_produk'] ?>" class="other-product-card">
-          <div class="other-card-top"><?= $emojiLain ?></div>
+          <div class="other-card-top">
+            <?php if ($lainFoto && file_exists('FOTO_UMKM/' . $lainFoto)): ?>
+            <img src="FOTO_UMKM/<?= htmlspecialchars($lainFoto) ?>" class="other-foto"
+              alt="<?= htmlspecialchars($lain['nama_produk']) ?>">
+            <?php else: ?>
+            <?= $emojiLain ?>
+            <?php endif; ?>
+          </div>
           <div class="other-card-body">
             <div class="other-card-category"><?= $emojiLain ?> <?= htmlspecialchars($lain['kategori_produk']) ?></div>
             <div class="other-card-name"><?= htmlspecialchars($lain['nama_produk']) ?></div>

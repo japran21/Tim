@@ -123,6 +123,13 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     flex: 1;
     min-width: 0;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .main-content>* {
+    width: 100%;
   }
 
   /* override section max-width when sidebar is present */
@@ -210,12 +217,53 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   .results-section {
     padding: 0 32px 60px;
+    align-items: center;
   }
 
-  .results-header,
+  .results-header {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .results-grid {
     width: 100%;
-    max-width: 860px;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .results-grid .product-card {
+    width: 100%;
+    max-width: 280px;
+    min-width: 0;
+  }
+
+  .product-card-top--foto {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
+  .product-card-top--foto .product-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .3s ease;
+  }
+
+  .product-card:hover .product-card-top--foto .product-card-img {
+    transform: scale(1.05);
+  }
+
+  .product-card-top--foto .product-card-emoji {
+    font-size: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
   }
 
   /* ===== KATEGORI SECTION ===== */
@@ -375,6 +423,52 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     color: #92400e;
   }
 
+  /* ===== HARGA SECTION ===== */
+  .harga-section {
+    padding: 0 32px 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .harga-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 900px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .harga-preset-btn {
+    background: #f3f4f6;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 50px;
+    padding: 9px 20px;
+    font-size: .875rem;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: all .18s ease;
+    white-space: nowrap;
+  }
+
+  .harga-preset-btn:hover {
+    border-color: var(--hijau);
+    color: var(--hijau);
+    background: rgba(46, 107, 79, .06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 107, 79, .15);
+  }
+
+  .harga-preset-btn.active {
+    background: var(--hijau);
+    color: #fff;
+    border-color: var(--hijau);
+    box-shadow: 0 4px 12px rgba(46, 107, 79, .30);
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
     .sidebar {
@@ -440,11 +534,27 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     <aside class="sidebar">
       <div class="sidebar-section">
         <span class="sidebar-label">Menu Kelola</span>
-        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">🏪</span> Kelola UMKM</a>
-        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">🍽️</span> Kelola Produk</a>
-        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">🌶️</span> Kelola Rasa</a>
-        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">💳</span> Kelola Pembayaran</a>
-        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">🤝</span> Kelola Mitra</a>
+        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola UMKM</a>
+        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Produk</a>
+        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Rasa</a>
+        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Pembayaran</a>
+        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Mitra</a>
+      </div>
+
+      <!-- SIDEBAR: Filter Harga -->
+      <div class="sidebar-section"
+        style="padding: 12px 16px 16px; border-top: 1px solid rgba(45,106,79,.08); margin-top: 8px;">
+        <span class="sidebar-label"> Range Harga</span>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
+            onclick="filterByHarga(0, 10000, this)">Rp 0 – 10K</button>
+          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
+            onclick="filterByHarga(0, 20000, this)">Rp 0 – 20K</button>
+          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
+            onclick="filterByHarga(10000, 25000, this)">Rp 10K – 25K</button>
+          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
+            onclick="filterByHarga(20000, 50000, this)">Rp 20K – 50K</button>
+        </div>
       </div>
     </aside>
 
@@ -475,10 +585,10 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               <button class="search-btn" onclick="doSearch()">Cari</button>
             </div>
             <div class="search-tags">
-              <span onclick="quickSearch('Batagor')">🍢 Batagor</span>
-              <span onclick="quickSearch('Mie Ayam')">🍜 Mie Ayam</span>
-              <span onclick="quickSearch('Surabi')">🥞 Surabi</span>
-              <span onclick="quickSearch('Es Kelapa')">🥥 Es Kelapa</span>
+              <span onclick="quickSearch('Batagor')">Batagor</span>
+              <span onclick="quickSearch('Mie Ayam')"> Mie Ayam</span>
+              <span onclick="quickSearch('Surabi')"> Surabi</span>
+              <span onclick="quickSearch('Es Kelapa')"> Es Kelapa</span>
             </div>
           </div>
         </div>
@@ -501,7 +611,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
         <div class="flavor-grid">
           <?php
-          $emojiRasa = ['Asin'=>'🧂','Gurih'=>'🍗','Manis'=>'🍯','Pedas'=>'🌶️','Asam'=>'🍋'];
+          $emojiRasa = ['Asin'=>'','Gurih'=>'','Manis'=>'','Pedas'=>'','Asam'=>''];
           mysqli_data_seek($resultRasa, 0);
           while ($rasa = mysqli_fetch_assoc($resultRasa)):
               $namaRasa = htmlspecialchars($rasa['jenis_rasa']);
@@ -604,11 +714,11 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   <script>
   const emojiMap = {
-    'Asin': '🧂',
-    'Gurih': '🍗',
-    'Manis': '🍯',
-    'Pedas': '🌶️',
-    'Asam': '🍋'
+    'Asin': '',
+    'Gurih': '',
+    'Manis': '',
+    'Pedas': '',
+    'Asam': ''
   };
   const kategoriEmojiMap = {
     'Makanan': '🍜',
@@ -617,11 +727,30 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   let activeRasa = null,
     activeKategori = null,
-    activeAsal = null;
+    activeAsal = null,
+    activeHarga = null;
+
+  // ===== FILTER HARGA =====
+  function filterByHarga(min, max, el) {
+    const label = el.textContent.trim();
+    if (activeHarga === label) {
+      resetFilter();
+      return;
+    }
+    clearAllActive();
+    activeHarga = label;
+    document.querySelectorAll('.harga-preset-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    showResults('💰 Harga <strong>' + escHtml(label) + '</strong>');
+    const maxParam = max >= 50000 ? 9999999 : max;
+    fetchAndRender('get_produk.php?harga_min=' + min + '&harga_max=' + maxParam, label, 'harga');
+  }
+  // ===== END FILTER HARGA =====
 
   function clearAllActive() {
-    activeRasa = activeKategori = activeAsal = null;
-    document.querySelectorAll('.flavor-card,.kategori-card,.asal-card').forEach(c => c.classList.remove('active'));
+    activeRasa = activeKategori = activeAsal = activeHarga = null;
+    document.querySelectorAll('.flavor-card,.kategori-card,.asal-card,.harga-preset-btn').forEach(c => c.classList
+      .remove('active'));
   }
 
   function showResults(labelHtml) {
@@ -706,9 +835,13 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         }
         const emoji = type === 'rasa' ? (emojiMap[label] || '🍽️') : type === 'kategori' ? (kategoriEmojiMap[label] ||
           '📂') : type === 'asal' ? '📍' : '🍽️';
-        grid.innerHTML = data.map(p => `
+        grid.innerHTML = data.map(p => {
+          const fotoHtml = p.foto ?
+            `<img src="FOTO_UMKM/${escHtml(p.foto)}" alt="${escHtml(p.nama_umkm)}" class="product-card-img" onerror="this.parentElement.innerHTML='<span class=\\'product-card-emoji\\'>${emoji}</span>'">` :
+            `<span class="product-card-emoji">${emoji}</span>`;
+          return `
           <a href="detail_produk.php?id=${p.id_produk}" class="product-card">
-            <div class="product-card-top">${emoji}</div>
+            <div class="product-card-top product-card-top--foto">${fotoHtml}</div>
             <div class="product-card-body">
               <div class="product-name">${escHtml(p.nama_produk)}</div>
               <div class="product-umkm">🏪 ${escHtml(p.nama_umkm)}</div>
@@ -719,7 +852,8 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               </div>
               <div class="product-harga">Rp ${fmtRp(p.harga)}</div>
             </div>
-          </a>`).join('');
+          </a>`;
+        }).join('');
       })
       .catch(err => {
         console.error(err);
