@@ -123,6 +123,13 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     flex: 1;
     min-width: 0;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .main-content > * {
+    width: 100%;
   }
 
   /* override section max-width when sidebar is present */
@@ -210,12 +217,27 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   .results-section {
     padding: 0 32px 60px;
+    align-items: center;
   }
 
-  .results-header,
+  .results-header {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .results-grid {
     width: 100%;
-    max-width: 860px;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .results-grid .product-card {
+    width: 100%;
+    max-width: 280px;
+    min-width: 0;
   }
 
   /* ===== KATEGORI SECTION ===== */
