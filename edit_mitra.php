@@ -24,26 +24,33 @@ if (mysqli_num_rows($result) == 0) {
 
 $mitra = mysqli_fetch_assoc($result);
 $error = '';
+$error_type = 'normal';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_mitra = trim($_POST['nama_mitra']);
-    
+
     if (empty($nama_mitra)) {
         $error = 'Nama mitra platform tidak boleh kosong!';
     } else {
-        // Cek apakah mitra sudah ada (kecuali mitra yang sedang diedit)
-        $check = mysqli_query($koneksi, "SELECT id_mitra FROM mitra_platform WHERE nama_mitra = '$nama_mitra' AND id_mitra != $id_mitra");
+        $nama_esc = mysqli_real_escape_string($koneksi, $nama_mitra);
+        $check = mysqli_query($koneksi, "SELECT id_mitra FROM mitra_platform WHERE nama_mitra = '$nama_esc' AND id_mitra != $id_mitra");
         if (mysqli_num_rows($check) > 0) {
             $error = 'Mitra platform "' . htmlspecialchars($nama_mitra) . '" sudah terdaftar!';
         } else {
-            $update = "UPDATE mitra_platform SET nama_mitra = '$nama_mitra' WHERE id_mitra = $id_mitra";
-            if (mysqli_query($koneksi, $update)) {
-                $_SESSION['message'] = 'Mitra platform berhasil diupdate!';
-                $_SESSION['message_type'] = 'success';
-                header('Location: mitra.php');
-                exit;
-            } else {
-                $error = 'Gagal mengupdate data: ' . mysqli_error($koneksi);
+            try {
+                $update = "UPDATE mitra_platform SET nama_mitra = '$nama_esc' WHERE id_mitra = $id_mitra";
+                if (mysqli_query($koneksi, $update)) {
+                    $_SESSION['message'] = 'Mitra platform berhasil diupdate!';
+                    $_SESSION['message_type'] = 'success';
+                    header('Location: mitra.php');
+                    exit;
+                } else {
+                    $error = mysqli_error($koneksi);
+                    $error_type = 'rollback';
+                }
+            } catch (mysqli_sql_exception $e) {
+                $error = $e->getMessage();
+                $error_type = 'rollback';
             }
         }
     }
@@ -185,9 +192,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <nav class="nav-links">
         <a href="index.php">Beranda</a>
+        <a href="umkm.php">Kelola UMKM</a>
+        <a href="produk.php">Kelola Produk</a>
         <a href="kategori_rasa.php">Kelola Rasa</a>
         <a href="bayar.php">Kelola Pembayaran</a>
-        <a href="mitra.php">Kelola Mitra</a>
+        <a href="mitra.php" class="active">Kelola Mitra</a>
       </nav>
       <div class="nav-actions"></div>
     </div>
@@ -198,23 +207,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1 class="form-title">✏️ Edit Mitra Platform</h1>
       <p class="form-subtitle">Ubah informasi mitra platform</p>
 
-      <?php 
-            $iconMap = [
-                'GoFood' => '',
-                'GrabFood' => '',
-                'ShopeeFood' => '🟡
-            ];
-            $currentIcon = $iconMap[$mitra['nama_mitra']] ?? '📱';
-            ?>
+      <?php
+      $iconMap = [
+          'GoFood'     => '',
+          'GrabFood'   => '',
+          'ShopeeFood' => '',
+          'Gojek'      => '',
+          'Grab'       => '',
+          'Shopee'     => '',
+      ];
+      $currentIcon = $iconMap[$mitra['nama_mitra']] ?? '📱';
+      ?>
 
       <div class="current-icon">
-        Icon saat ini: <?= $currentIcon ?> <?= htmlspecialchars($mitra['nama_mitra']) ?>
+        <?= $currentIcon ?> <?= htmlspecialchars($mitra['nama_mitra']) ?>
       </div>
 
-      <?php if ($error): ?>
-      <div class="error-message">
-        ⚠️ <?= htmlspecialchars($error) ?>
+      <?php if ($error && $error_type === 'rollback'): ?>
+      <div
+        style="background:#1a1a2e;color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:24px;border-left:5px solid #ef4444;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.3rem;">🔴</span>
+          <strong style="font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;">GAGAL — PERUBAHAN DIBATALKAN
+            (ROLLBACK)</strong>
+        </div>
+        <div style="font-size:.88rem;color:#fca5a5;margin-bottom:10px;"><?= htmlspecialchars($error) ?></div>
+        <div style="font-size:.8rem;color:#9ca3af;">Tidak ada perubahan yang tersimpan. Silakan coba lagi.</div>
       </div>
+      <?php elseif ($error): ?>
+      <div class="error-message">⚠️ <?= htmlspecialchars($error) ?></div>
       <?php endif; ?>
 
       <form method="POST" action="">

@@ -66,10 +66,10 @@ while ($row = mysqli_fetch_assoc($statsResult)) $statsMetode[] = $row;
 
 // Icon & warna per metode
 $metodeConfig = [
-    'Cash'  => ['icon' => '💵', 'color' => '#16a34a', 'bg' => '#dcfce7', 'desc' => 'Pembayaran tunai langsung'],
-    'QRIS'  => ['icon' => '📱', 'color' => '#7c3aed', 'bg' => '#ede9fe', 'desc' => 'Scan QR Code universal'],
-    'Dana'  => ['icon' => '💙', 'color' => '#2563eb', 'bg' => '#dbeafe', 'desc' => 'Dompet digital Dana'],
-    'OVO'   => ['icon' => '💜', 'color' => '#7c3aed', 'bg' => '#f3e8ff', 'desc' => 'Dompet digital OVO'],
+    'Cash'  => ['icon' => '', 'color' => '#16a34a', 'bg' => '#dcfce7', 'desc' => 'Pembayaran tunai langsung'],
+    'QRIS'  => ['icon' => '', 'color' => '#7c3aed', 'bg' => '#ede9fe', 'desc' => 'Scan QR Code universal'],
+    'Dana'  => ['icon' => '', 'color' => '#2563eb', 'bg' => '#dbeafe', 'desc' => 'Dompet digital Dana'],
+    'OVO'   => ['icon' => '', 'color' => '#7c3aed', 'bg' => '#f3e8ff', 'desc' => 'Dompet digital OVO'],
 ];
 
 function getConfig($nama, $config) {
