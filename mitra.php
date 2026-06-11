@@ -299,38 +299,19 @@ $result = mysqli_query($koneksi, $query);
           <tr>
             <th>ID</th>
             <th>Nama Mitra</th>
-            <th>Icon</th>
-            <th>Aksi</th>
+            <th style="text-align: right;">Aksi</th>
           </tr>
         </thead>
         <tbody>
           <?php if ($total_mitra > 0): ?>
-          <?php 
-                        $iconMap = [
-                            'GoFood' => '🟢',
-                            'GrabFood' => '🟠',
-                            'ShopeeFood' => '🟡',
-                            'Gojek' => '🟢',
-                            'Grab' => '🟠',
-                            'Shopee' => '🟡'
-                        ];
-                        $colorMap = [
-                            'GoFood' => '#00b14f',
-                            'GrabFood' => '#00b14f',
-                            'ShopeeFood' => '#ee4d2d'
-                        ];
-                        while ($row = mysqli_fetch_assoc($result)): 
-                            $icon = $iconMap[$row['nama_mitra']] ?? '📱';
-                            $color = $colorMap[$row['nama_mitra']] ?? '#6b7280';
-                        ?>
+          <?php while ($row = mysqli_fetch_assoc($result)): ?>
           <tr>
             <td><?= $row['id_mitra'] ?></td>
             <td>
               <strong><?= htmlspecialchars($row['nama_mitra']) ?></strong>
             </td>
-            <td style="font-size: 1.5rem;"><?= $icon ?></td>
-            <td>
-              <div class="action-buttons">
+            <td style="text-align: right;">
+              <div class="action-buttons" style="justify-content: flex-end;">
                 <a href="edit_mitra.php?id=<?= $row['id_mitra'] ?>" class="btn-edit">✏️ Edit</a>
                 <a href="detail_mitra.php?id=<?= $row['id_mitra'] ?>" class="btn-link">🔍 Detail</a>
                 <button onclick="confirmDelete(<?= $row['id_mitra'] ?>, '<?= htmlspecialchars($row['nama_mitra']) ?>')"
@@ -341,7 +322,7 @@ $result = mysqli_query($koneksi, $query);
           <?php endwhile; ?>
           <?php else: ?>
           <tr>
-            <td colspan="5">
+            <td colspan="3">
               <div class="empty-state">
                 📭 Belum ada data mitra platform
               </div>

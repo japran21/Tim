@@ -227,9 +227,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="kategori_produk">Kategori *</label>
             <select id="kategori_produk" name="kategori_produk" required>
               <option value="">-- Pilih Kategori --</option>
-              <option value="Makanan">🍜 Makanan</option>
-              <option value="Minuman">🥤 Minuman</option>
-              <option value="Topping">🍯 Topping</option>
+              <option value="Makanan">Makanan</option>
+              <option value="Minuman">Minuman</option>
+              <option value="Topping">Topping</option>
               <option value="Snack">🍿 Snack</option>
             </select>
           </div>

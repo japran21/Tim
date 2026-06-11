@@ -5,21 +5,21 @@ require_once 'koneksi.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $jenis_rasa = trim($_POST['jenis_rasa']);
+    $nama_topping = trim($_POST['nama_topping']);
     
-    if (empty($jenis_rasa)) {
-        $error = 'Jenis rasa tidak boleh kosong!';
+    if (empty($nama_topping)) {
+        $error = 'Nama topping tidak boleh kosong!';
     } else {
-        // Cek apakah rasa sudah ada
-        $check = mysqli_query($koneksi, "SELECT id_rasa FROM kategori_rasa WHERE jenis_rasa = '$jenis_rasa'");
+        // Cek apakah topping sudah ada
+        $check = mysqli_query($koneksi, "SELECT id_topping FROM kategori_topping WHERE nama_topping = '$nama_topping'");
         if (mysqli_num_rows($check) > 0) {
-            $error = 'Rasa "' . htmlspecialchars($jenis_rasa) . '" sudah terdaftar!';
+            $error = 'Topping "' . htmlspecialchars($nama_topping) . '" sudah terdaftar!';
         } else {
-            $query = "INSERT INTO kategori_rasa (jenis_rasa) VALUES ('$jenis_rasa')";
+            $query = "INSERT INTO kategori_topping (nama_topping) VALUES ('$nama_topping')";
             if (mysqli_query($koneksi, $query)) {
-                $_SESSION['message'] = 'Kategori rasa "' . htmlspecialchars($jenis_rasa) . '" berhasil ditambahkan!';
+                $_SESSION['message'] = 'Kategori topping "' . htmlspecialchars($nama_topping) . '" berhasil ditambahkan!';
                 $_SESSION['message_type'] = 'success';
-                header('Location: kategori_rasa.php');
+                header('Location: kategori_topping.php');
                 exit;
             } else {
                 $error = 'Gagal menambahkan data: ' . mysqli_error($koneksi);
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Kategori Rasa - UMKM Ciwaruga</title>
+    <title>Tambah Kategori Topping - UMKM Ciwaruga</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <nav class="nav-links">
                 <a href="index.php">Beranda</a>
-                <a href="kategori_rasa.php">Kelola Rasa</a>
+                <a href="kategori_topping.php">Kelola Topping</a>
             </nav>
             <div class="nav-actions"></div>
         </div>
@@ -164,8 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="form-container">
         <div class="form-card">
-            <h1 class="form-title">➕ Tambah Kategori Rasa</h1>
-            <p class="form-subtitle">Silakan masukkan jenis rasa baru untuk makanan di Ciwaruga</p>
+            <h1 class="form-title">➕ Tambah Kategori Topping</h1>
+            <p class="form-subtitle">Silakan masukkan jenis topping baru untuk makanan di Ciwaruga</p>
 
             <?php if ($error): ?>
                 <div class="error-message">
@@ -175,16 +175,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <form method="POST" action="">
                 <div class="form-group">
-                    <label for="jenis_rasa">Jenis Rasa *</label>
-                    <input type="text" id="jenis_rasa" name="jenis_rasa" placeholder="Contoh: Pedas, Manis, Gurih, Asin, Asam" required value="<?= isset($_POST['jenis_rasa']) ? htmlspecialchars($_POST['jenis_rasa']) : '' ?>">
+                    <label for="nama_topping">Nama Topping *</label>
+                    <input type="text" id="nama_topping" name="nama_topping" placeholder="Contoh: Keju, Coklat, Kacang, Oreo" required value="<?= isset($_POST['nama_topping']) ? htmlspecialchars($_POST['nama_topping']) : '' ?>">
                     <div class="emoji-tip">
-                        💡 Tips: Rasa yang umum digunakan: 🧂 Asin, 🍗 Gurih, Manis, 🌶️ Pedas, 🍋 Asam
+                        💡 Tips: Topping yang umum digunakan: Keju, Coklat, Susu, Kacang, Oreo
                     </div>
                 </div>
 
                 <div class="form-actions">
                     <button type="submit" class="btn-submit">Simpan</button>
-                    <a href="kategori_rasa.php" class="btn-cancel">Batal</a>
+                    <a href="kategori_topping.php" class="btn-cancel">Batal</a>
                 </div>
             </form>
         </div>

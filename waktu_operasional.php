@@ -373,7 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <!-- Tampilan Pilih UMKM -->
     <div class="card">
       <div class="header-section">
-        <h1>🕐 Atur Waktu Operasional UMKM</h1>
+        <h1> Atur Waktu Operasional UMKM</h1>
         <a href="umkm.php" class="btn-secondary">← Kembali ke UMKM</a>
       </div>
 
@@ -399,7 +399,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <!-- Tampilan Form Waktu Operasional -->
     <div class="card">
       <div class="header-section">
-        <h1>🕐 Waktu Operasional</h1>
+        <h1> Waktu Operasional</h1>
         <div class="btn-group">
           <a href="waktu_operasional.php" class="btn-secondary">← Ganti UMKM</a>
           <a href="umkm.php" class="btn-secondary">🏪 Daftar UMKM</a>
@@ -464,12 +464,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 <td>
                   <span class="time-note" id="note_<?= $hari ?>">
                     <?php if (!$isTutup && $jam_buka && $jam_tutup): ?>
-                    ⏰ Buka dari <?= date('H:i', strtotime($jam_buka)) ?> WIB sampai
+                    Buka dari <?= date('H:i', strtotime($jam_buka)) ?> WIB sampai
                     <?= date('H:i', strtotime($jam_tutup)) ?> WIB
                     <?php elseif (!$isTutup): ?>
-                    ⏰ Belum diatur
+                    Belum diatur
                     <?php else: ?>
-                    🚫 Libur/Tutup
+                    Libur/Tutup
                     <?php endif; ?>
                   </span>
                 </td>
@@ -508,15 +508,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
       jamTutup.disabled = true;
       jamBuka.value = '';
       jamTutup.value = '';
-      note.innerHTML = '🚫 Libur/Tutup';
+      note.innerHTML = ' Libur/Tutup';
     } else {
       jamBuka.disabled = false;
       jamTutup.disabled = false;
-      note.innerHTML = '⏰ Belum diatur';
+      note.innerHTML = ' Belum diatur';
 
       // Jika sudah ada nilai, update note
       if (jamBuka.value && jamTutup.value) {
-        note.innerHTML = '⏰ Buka dari ' + jamBuka.value + ' WIB sampai ' + jamTutup.value + ' WIB';
+        note.innerHTML = ' Buka dari ' + jamBuka.value + ' WIB sampai ' + jamTutup.value + ' WIB';
       }
     }
   }
@@ -528,9 +528,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     const statusSelect = document.querySelector('.status-select[data-hari="' + hari + '"]');
 
     if (statusSelect && statusSelect.value === 'Buka' && jamBuka.value && jamTutup.value) {
-      note.innerHTML = '⏰ Buka dari ' + jamBuka.value + ' WIB sampai ' + jamTutup.value + ' WIB';
+      note.innerHTML = ' Buka dari ' + jamBuka.value + ' WIB sampai ' + jamTutup.value + ' WIB';
     } else if (statusSelect && statusSelect.value === 'Buka') {
-      note.innerHTML = '⏰ Belum diatur';
+      note.innerHTML = ' Belum diatur';
     }
   }
 

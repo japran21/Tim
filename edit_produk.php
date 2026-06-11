@@ -45,37 +45,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id_umkm <= 0) $errors[] = 'Pilih UMKM terlebih dahulu';
     if (empty($nama_produk)) $errors[] = 'Nama produk tidak boleh kosong';
     if ($harga < 0) $errors[] = 'Harga tidak boleh minus';
+    
+    $old_harga = (float)$produk['harga'];
+    $max_harga = $old_harga * 1.5;
+    if ($harga > $max_harga) {
+        $errors[] = 'Kenaikan harga tidak boleh lebih dari 50% dari harga sebelumnya (Maksimal Rp ' . number_format($max_harga, 0, ',', '.') . ')';
+        $error_type = 'rollback';
+    }
+
     if (empty($kategori_produk)) $errors[] = 'Kategori produk tidak boleh kosong';
 
-    // Upload foto produk baru (opsional)
-    $foto_produk_baru = $produk['foto_produk'] ?? NULL;
-    if (isset($_FILES['foto_produk']) && $_FILES['foto_produk']['error'] == 0) {
-        $target_dir = "FOTO_PRODUK/";
-        if (!file_exists($target_dir)) {
-            mkdir($target_dir, 0777, true);
-        }
-        // Hapus foto lama jika ada
-        if (!empty($produk['foto_produk']) && file_exists($produk['foto_produk'])) {
-            unlink($produk['foto_produk']);
-        }
-        $file_extension = pathinfo($_FILES['foto_produk']['name'], PATHINFO_EXTENSION);
-        $new_filename = time() . '_' . preg_replace('/[^a-zA-Z0-9]/', '_', $nama_produk) . '.' . $file_extension;
-        $target_file = $target_dir . $new_filename;
-        if (move_uploaded_file($_FILES['foto_produk']['tmp_name'], $target_file)) {
-            $foto_produk_baru = $target_file;
-        }
-    }
-    
     if (empty($errors)) {
         $asal = $asal_daerah ? "'" . mysqli_real_escape_string($koneksi, $asal_daerah) . "'" : "NULL";
-        $foto_sql = $foto_produk_baru ? "'" . mysqli_real_escape_string($koneksi, $foto_produk_baru) . "'" : "NULL";
         $update = "UPDATE produk 
-                   SET id_umkm = $id_umkm, 
+                   SET id_umkm = $id_umkm,
                        nama_produk = '$nama_produk', 
                        harga = $harga, 
                        kategori_produk = '$kategori_produk', 
-                       asal_daerah = $asal,
-                       foto_produk = $foto_sql
+                       asal_daerah = $asal
                    WHERE id_produk = $id_produk";
         
         try {
@@ -285,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
       <?php endif; ?>
 
-      <form method="POST" action="" enctype="multipart/form-data">
+      <form method="POST" action="">
         <div class="form-group">
           <label for="id_umkm">Nama UMKM *</label>
           <select id="id_umkm" name="id_umkm" required>
@@ -332,18 +319,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             value="<?= htmlspecialchars($produk['asal_daerah'] ?? '') ?>" placeholder="Contoh: Bandung, Jawa Barat">
         </div>
 
-        <div class="form-group">
-          <label for="foto_produk">Foto Produk</label>
-          <?php if (!empty($produk['foto_produk']) && file_exists($produk['foto_produk'])): ?>
-          <div style="margin-bottom:10px;">
-            <img src="<?= htmlspecialchars($produk['foto_produk']) ?>" alt="Foto Produk"
-              style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #e2e8f0;">
-            <div style="font-size:.8rem;color:#6b7280;margin-top:4px;">Foto saat ini</div>
-          </div>
-          <?php endif; ?>
-          <input type="file" id="foto_produk" name="foto_produk" accept="image/*">
-          <small style="color:#6b7280;">Kosongkan jika tidak ingin mengganti foto. Format: JPG, PNG, GIF, WEBP.</small>
-        </div>
+
 
         <div class="form-actions">
           <button type="button" class="btn-submit" onclick="showKonfirmasi()">Update Produk</button>
@@ -364,8 +340,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div style="font-size:.9rem;line-height:1.8;color:#d1d5db;margin-bottom:20px;">
             <div><span style="color:#9ca3af;width:110px;display:inline-block;">Nama Produk</span>: <span
                 id="konfirm-nama" style="color:#fff;font-weight:600;"></span></div>
-            <div><span style="color:#9ca3af;width:110px;display:inline-block;">UMKM</span>: <span id="konfirm-umkm"
-                style="color:#fff;"></span></div>
             <div><span style="color:#9ca3af;width:110px;display:inline-block;">Harga</span>: <span id="konfirm-harga"
                 style="color:#fff;"></span></div>
             <div><span style="color:#9ca3af;width:110px;display:inline-block;">Kategori</span>: <span
@@ -402,8 +376,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script>
   function showKonfirmasi() {
     const nama = document.getElementById('nama_produk').value.trim();
-    const umkmSel = document.getElementById('id_umkm');
-    const umkm = umkmSel.options[umkmSel.selectedIndex]?.text || '-';
     const harga = document.getElementById('harga').value;
     const kategori = document.getElementById('kategori_produk').value;
 
@@ -413,7 +385,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     document.getElementById('konfirm-nama').textContent = nama;
-    document.getElementById('konfirm-umkm').textContent = umkm;
     document.getElementById('konfirm-harga').textContent = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
     document.getElementById('konfirm-kategori').textContent = kategori;
 

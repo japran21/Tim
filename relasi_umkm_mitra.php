@@ -469,7 +469,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
       <div class="section-title">🤝 Mitra Platform yang Sudah Dipilih</div>
 
       <div class="stats-info">
-        <span>📊 Total mitra aktif: <strong><?= count($mitraTerpilih) ?></strong></span>
+        <span>Total mitra aktif: <strong><?= count($mitraTerpilih) ?></strong></span>
         <span>UMKM bisa terdaftar di beberapa platform sekaligus</span>
       </div>
 

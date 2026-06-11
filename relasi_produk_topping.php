@@ -26,82 +26,92 @@ if (!$produk) {
     exit;
 }
 
-// Ambil semua rasa
-$queryRasa = "SELECT * FROM kategori_rasa ORDER BY id_rasa";
-$resultRasa = mysqli_query($koneksi, $queryRasa);
+// Ambil semua topping
+$queryTopping = "SELECT * FROM kategori_topping ORDER BY id_topping";
+$resultTopping = mysqli_query($koneksi, $queryTopping);
 
-// Ambil rasa yang sudah dimiliki produk
-$queryRasaProduk = "SELECT id_rasa FROM produk_rasa WHERE id_produk = $id_produk";
-$resultRasaProduk = mysqli_query($koneksi, $queryRasaProduk);
-$rasaTerpilih = [];
-while ($row = mysqli_fetch_assoc($resultRasaProduk)) {
-    $rasaTerpilih[] = $row['id_rasa'];
+// Ambil topping yang sudah dimiliki produk
+$queryToppingProduk = "SELECT id_topping FROM produk_topping WHERE id_produk = $id_produk";
+$resultToppingProduk = mysqli_query($koneksi, $queryToppingProduk);
+$toppingTerpilih = [];
+while ($row = mysqli_fetch_assoc($resultToppingProduk)) {
+    $toppingTerpilih[] = $row['id_topping'];
 }
 
 // Proses update relasi
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] == 'update_rasa') {
-    $rasa_ids = isset($_POST['rasa_ids']) ? $_POST['rasa_ids'] : [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] == 'update_topping') {
+    $topping_ids = isset($_POST['topping_ids']) ? $_POST['topping_ids'] : [];
     
     // Hapus semua relasi lama
-    mysqli_query($koneksi, "DELETE FROM produk_rasa WHERE id_produk = $id_produk");
+    mysqli_query($koneksi, "DELETE FROM produk_topping WHERE id_produk = $id_produk");
     
     // Insert relasi baru
-    if (!empty($rasa_ids)) {
+    if (!empty($topping_ids)) {
         $values = [];
-        foreach ($rasa_ids as $id_rasa) {
-            $id_rasa = (int)$id_rasa;
-            $values[] = "($id_produk, $id_rasa)";
+        foreach ($topping_ids as $id_topping) {
+            $id_topping = (int)$id_topping;
+            $values[] = "($id_produk, $id_topping)";
         }
-        $sql = "INSERT INTO produk_rasa (id_produk, id_rasa) VALUES " . implode(', ', $values);
+        $sql = "INSERT INTO produk_topping (id_produk, id_topping) VALUES " . implode(', ', $values);
         if (mysqli_query($koneksi, $sql)) {
-            $_SESSION['message'] = 'Relasi rasa produk berhasil diupdate!';
+            $_SESSION['message'] = 'Relasi topping produk berhasil diupdate!';
             $_SESSION['message_type'] = 'success';
         } else {
             $_SESSION['message'] = 'Gagal mengupdate relasi: ' . mysqli_error($koneksi);
             $_SESSION['message_type'] = 'error';
         }
     } else {
-        $_SESSION['message'] = 'Semua rasa telah dihapus dari produk ini.';
+        $_SESSION['message'] = 'Semua topping telah dihapus dari produk ini.';
         $_SESSION['message_type'] = 'warning';
     }
     
-    // Refresh daftar rasa terpilih
-    $rasaTerpilih = $rasa_ids;
-    header("Location: relasi_produk_rasa.php?id_produk=$id_produk");
+    // Refresh daftar topping terpilih
+    $toppingTerpilih = $topping_ids;
+    header("Location: relasi_produk_topping.php?id_produk=$id_produk");
     exit;
 }
 
 // Hapus relasi tertentu
-if (isset($_GET['hapus_rasa']) && isset($_GET['id_rasa'])) {
-    $id_rasa_hapus = (int)$_GET['id_rasa'];
-    $queryDelete = "DELETE FROM produk_rasa WHERE id_produk = $id_produk AND id_rasa = $id_rasa_hapus";
+if (isset($_GET['hapus_topping']) && isset($_GET['id_topping'])) {
+    $id_topping_hapus = (int)$_GET['id_topping'];
+    $queryDelete = "DELETE FROM produk_topping WHERE id_produk = $id_produk AND id_topping = $id_topping_hapus";
     if (mysqli_query($koneksi, $queryDelete)) {
-        $_SESSION['message'] = 'Rasa berhasil dihapus dari produk!';
+        $_SESSION['message'] = 'Topping berhasil dihapus dari produk!';
         $_SESSION['message_type'] = 'success';
     } else {
-        $_SESSION['message'] = 'Gagal menghapus rasa: ' . mysqli_error($koneksi);
+        $_SESSION['message'] = 'Gagal menghapus topping: ' . mysqli_error($koneksi);
         $_SESSION['message_type'] = 'error';
     }
-    header("Location: relasi_produk_rasa.php?id_produk=$id_produk");
+    header("Location: relasi_produk_topping.php?id_produk=$id_produk");
     exit;
 }
 
-// Emoji mapping per rasa
-$emojiRasa = [
-    'Asin' => '🧂',
-    'Gurih' => '🍗',
-    'Manis' => '',
-    'Pedas' => '🌶️',
-    'Asam' => '🍋',
+// Emoji mapping per topping
+$emojiTopping = [
+    'Keju' => '',
+    'Coklat' => '',
+    'Susu' => '',
+    'Kacang' => '',
+    'Oreo' => '',
+    'Pisang' => '',
+    'Blueberry' => '',
+    'Mozzarella' => '',
+    'Mayo' => '',
+    'Sambal' => '',
 ];
 
-// Warna untuk setiap rasa
-$colorRasa = [
-    'Asin' => '#3b82f6',
-    'Gurih' => '#f59e0b',
-    'Manis' => '#ec4899',
-    'Pedas' => '#ef4444',
-    'Asam' => '#22c55e',
+// Warna untuk setiap topping
+$colorTopping = [
+    'Keju' => '#f59e0b',
+    'Coklat' => '#78350f',
+    'Susu' => '#9ca3af',
+    'Kacang' => '#b45309',
+    'Oreo' => '#1f2937',
+    'Pisang' => '#eab308',
+    'Blueberry' => '#4f46e5',
+    'Mozzarella' => '#fbbf24',
+    'Mayo' => '#fcd34d',
+    'Sambal' => '#ef4444',
 ];
 ?>
 
@@ -111,7 +121,7 @@ $colorRasa = [
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kelola Rasa Produk - UMKM Ciwaruga</title>
+  <title>Kelola Topping Produk - UMKM Ciwaruga</title>
   <link rel="stylesheet" href="style.css">
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
@@ -170,14 +180,14 @@ $colorRasa = [
     gap: 8px;
   }
 
-  .rasa-grid {
+  .topping-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     margin-bottom: 28px;
   }
 
-  .rasa-checkbox {
+  .topping-checkbox {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -190,33 +200,33 @@ $colorRasa = [
     font-weight: 500;
   }
 
-  .rasa-checkbox:hover {
+  .topping-checkbox:hover {
     background: #f3f4f6;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  .rasa-checkbox.selected {
+  .topping-checkbox.selected {
     background: #ecfdf5;
     border-color: #10b981;
   }
 
-  .rasa-checkbox input {
+  .topping-checkbox input {
     width: 18px;
     height: 18px;
     cursor: pointer;
     accent-color: #2e6b4f;
   }
 
-  .rasa-emoji {
+  .topping-emoji {
     font-size: 1.3rem;
   }
 
-  .rasa-label {
+  .topping-label {
     font-size: 0.95rem;
   }
 
-  .selected-rasa-list {
+  .selected-topping-list {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
@@ -224,7 +234,7 @@ $colorRasa = [
     margin-bottom: 24px;
   }
 
-  .rasa-badge {
+  .topping-badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -236,7 +246,7 @@ $colorRasa = [
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
 
-  .rasa-badge .remove {
+  .topping-badge .remove {
     cursor: pointer;
     font-weight: bold;
     margin-left: 6px;
@@ -246,7 +256,7 @@ $colorRasa = [
     transition: background 0.2s;
   }
 
-  .rasa-badge .remove:hover {
+  .topping-badge .remove:hover {
     background: rgba(0, 0, 0, 0.4);
   }
 
@@ -321,7 +331,7 @@ $colorRasa = [
     border-left: 5px solid #f59e0b;
   }
 
-  .empty-rasa {
+  .empty-topping {
     text-align: center;
     padding: 32px;
     background: #f9fafb;
@@ -345,7 +355,7 @@ $colorRasa = [
   }
 
   @media (max-width: 640px) {
-    .rasa-checkbox {
+    .topping-checkbox {
       padding: 8px 16px;
     }
 
@@ -374,9 +384,7 @@ $colorRasa = [
       <nav class="nav-links">
         <a href="index.php">Beranda</a>
         <a href="produk.php">Kelola Produk</a>
-        <a href="kategori_rasa.php">Kelola Rasa</a>
-        <a href="bayar.php">Kelola Pembayaran</a>
-        <a href="mitra.php">Kelola Mitra</a>
+        <a href="kategori_topping.php">Kelola Topping</a>
       </nav>
       <div class="nav-actions"></div>
     </div>
@@ -412,33 +420,33 @@ $colorRasa = [
 
       <!-- Statistik -->
       <div class="stats-info">
-        <span>Total rasa yang dipilih: <strong><?= count($rasaTerpilih) ?></strong></span>
-        <span>😋 Setiap produk bisa memiliki multiple rasa</span>
+        <span>Total topping yang dipilih: <strong><?= count($toppingTerpilih) ?></strong></span>
+        <span>Setiap produk bisa memiliki multiple topping</span>
       </div>
 
-      <!-- Rasa yang Sudah Dipilih -->
+      <!-- Topping yang Sudah Dipilih -->
       <div>
         <div class="section-title">
-          <span>😋</span> Rasa yang Sudah Dipilih
+          <span></span> Topping yang Sudah Dipilih
         </div>
-        <div class="selected-rasa-list">
-          <?php if (empty($rasaTerpilih)): ?>
-          <div class="empty-rasa">
-            Belum ada rasa yang dipilih untuk produk ini.<br>
-            Silakan pilih rasa di bawah.
+        <div class="selected-topping-list">
+          <?php if (empty($toppingTerpilih)): ?>
+          <div class="empty-topping">
+            Belum ada topping yang dipilih untuk produk ini.<br>
+            Silakan pilih topping di bawah.
           </div>
           <?php else: ?>
           <?php 
-                        mysqli_data_seek($resultRasa, 0);
-                        while ($rasa = mysqli_fetch_assoc($resultRasa)):
-                            if (in_array($rasa['id_rasa'], $rasaTerpilih)):
-                                $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '😋';
-                                $color = $colorRasa[$rasa['jenis_rasa']] ?? '#6b7280';
+                        mysqli_data_seek($resultTopping, 0);
+                        while ($topping = mysqli_fetch_assoc($resultTopping)):
+                            if (in_array($topping['id_topping'], $toppingTerpilih)):
+                                $emoji = $emojiTopping[$topping['nama_topping']] ?? '';
+                                $color = $colorTopping[$topping['nama_topping']] ?? '#6b7280';
                         ?>
-          <div class="rasa-badge" style="background: <?= $color ?>;">
-            <?= $emoji ?> <?= htmlspecialchars($rasa['jenis_rasa']) ?>
-            <a href="?id_produk=<?= $id_produk ?>&hapus_rasa=1&id_rasa=<?= $rasa['id_rasa'] ?>" class="remove"
-              onclick="return confirm('Hapus rasa <?= htmlspecialchars($rasa['jenis_rasa']) ?> dari produk ini?')"
+          <div class="topping-badge" style="background: <?= $color ?>;">
+            <?= $emoji ?> <?= htmlspecialchars($topping['nama_topping']) ?>
+            <a href="?id_produk=<?= $id_produk ?>&hapus_topping=1&id_topping=<?= $topping['id_topping'] ?>" class="remove"
+              onclick="return confirm('Hapus topping <?= htmlspecialchars($topping['nama_topping']) ?> dari produk ini?')"
               style="color: white; text-decoration: none;">✕</a>
           </div>
           <?php 
@@ -449,40 +457,35 @@ $colorRasa = [
         </div>
       </div>
 
-      <!-- Form Tambah Rasa -->
+      <!-- Form Tambah Topping -->
       <form method="POST" action="" style="margin-top: 32px;">
-        <input type="hidden" name="action" value="update_rasa">
+        <input type="hidden" name="action" value="update_topping">
 
         <div class="section-title">
-          <span>➕</span> Tambah / Ubah Rasa Produk
+          <span>➕</span> Tambah / Ubah Topping Produk
         </div>
 
-        <div class="rasa-grid">
+        <div class="topping-grid">
           <?php 
-                    mysqli_data_seek($resultRasa, 0);
-                    while ($rasa = mysqli_fetch_assoc($resultRasa)): 
-                        $isChecked = in_array($rasa['id_rasa'], $rasaTerpilih);
-                        $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '😋';
-                        $color = $colorRasa[$rasa['jenis_rasa']] ?? '#6b7280';
+                    mysqli_data_seek($resultTopping, 0);
+                    while ($topping = mysqli_fetch_assoc($resultTopping)): 
+                        $isChecked = in_array($topping['id_topping'], $toppingTerpilih);
+                        $emoji = $emojiTopping[$topping['nama_topping']] ?? '';
+                        $color = $colorTopping[$topping['nama_topping']] ?? '#6b7280';
                     ?>
-          <label class="rasa-checkbox <?= $isChecked ? 'selected' : '' ?>"
+          <label class="topping-checkbox <?= $isChecked ? 'selected' : '' ?>"
             style="border-color: <?= $isChecked ? $color : 'transparent' ?>;">
-            <input type="checkbox" name="rasa_ids[]" value="<?= $rasa['id_rasa'] ?>" <?= $isChecked ? 'checked' : '' ?>>
-            <span class="rasa-emoji"><?= $emoji ?></span>
-            <span class="rasa-label"><?= htmlspecialchars($rasa['jenis_rasa']) ?></span>
+            <input type="checkbox" name="topping_ids[]" value="<?= $topping['id_topping'] ?>" <?= $isChecked ? 'checked' : '' ?>>
+            <span class="topping-emoji"><?= $emoji ?></span>
+            <span class="topping-label"><?= htmlspecialchars($topping['nama_topping']) ?></span>
           </label>
           <?php endwhile; ?>
         </div>
 
         <div class="form-actions">
           <button type="submit" class="btn-save">
-            💾 Simpan Perubahan Rasa
+            💾 Simpan Perubahan Topping
           </button>
-          <?php if ($produk['kategori_produk'] === 'Makanan' || $produk['kategori_produk'] === 'Minuman'): ?>
-          <a href="relasi_produk_topping.php?id_produk=<?= $id_produk ?>" class="btn-back" style="background: #fef08a; color: #854d0e;">
-            Lanjut ke Topping →
-          </a>
-          <?php endif; ?>
           <a href="produk.php" class="btn-back">
             ← Kembali ke Daftar Produk
           </a>
@@ -504,7 +507,7 @@ $colorRasa = [
   <script>
   // Update styling saat checkbox berubah
   document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('.rasa-checkbox input');
+    const checkboxes = document.querySelectorAll('.topping-checkbox input');
 
     checkboxes.forEach(checkbox => {
       checkbox.addEventListener('change', function() {

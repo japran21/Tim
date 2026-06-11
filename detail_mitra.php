@@ -292,8 +292,6 @@ $color = $colorMitra[$mitra['nama_mitra']] ?? '#6b7280';
     <div>
       <a href="mitra.php" class="back-link">← Kembali ke Kelola Mitra</a>
     </div>
-
-    <!-- Header Card -->
     <div class="card header-card">
       <div class="mitra-badge-icon">
         <?= $icon ?>
@@ -306,7 +304,7 @@ $color = $colorMitra[$mitra['nama_mitra']] ?? '#6b7280';
       </div>
     </div>
 
-    <!-- Partner UMKM list -->
+
     <div class="card">
       <div class="section-title">
         <span>🏪</span> UMKM Rekanan Terdaftar

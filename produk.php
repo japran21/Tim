@@ -48,11 +48,14 @@ $query = "
         u.id_umkm,
         u.nama_umkm,
         GROUP_CONCAT(DISTINCT kr.jenis_rasa SEPARATOR ', ') as daftar_rasa,
-        GROUP_CONCAT(DISTINCT kr.id_rasa SEPARATOR ',') as id_rasa_list
+        GROUP_CONCAT(DISTINCT kr.id_rasa SEPARATOR ',') as id_rasa_list,
+        GROUP_CONCAT(DISTINCT kt.nama_topping SEPARATOR ', ') as daftar_topping
     FROM produk p
     JOIN umkm u ON p.id_umkm = u.id_umkm
     LEFT JOIN produk_rasa pr ON p.id_produk = pr.id_produk
     LEFT JOIN kategori_rasa kr ON pr.id_rasa = kr.id_rasa
+    LEFT JOIN produk_topping pt ON p.id_produk = pt.id_produk
+    LEFT JOIN kategori_topping kt ON pt.id_topping = kt.id_topping
     $where_clause
     GROUP BY p.id_produk
     ORDER BY p.id_produk ASC
@@ -347,6 +350,15 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
     background: #fde68a;
   }
 
+  .btn-topping {
+    background: #fef08a;
+    color: #854d0e;
+  }
+
+  .btn-topping:hover {
+    background: #fde047;
+  }
+
   .harga {
     font-weight: 600;
     color: #f59e0b;
@@ -526,6 +538,7 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
             <th>Harga</th>
             <th>Kategori</th>
             <th>Rasa</th>
+            <th>Topping</th>
             <th>Asal Daerah</th>
             <th>Aksi</th>
           </tr>
@@ -554,12 +567,28 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
               <span class="rasa-badge" style="background:#fee2e2;">Belum ada rasa</span>
               <?php endif; ?>
             </td>
+            <td>
+              <?php 
+                                    $topping_list = explode(', ', $row['daftar_topping'] ?? '');
+                                    foreach ($topping_list as $t): 
+                                        if ($t): ?>
+              <span class="rasa-badge" style="background:#fef3c7; color:#92400e;"><?= htmlspecialchars($t) ?></span>
+              <?php 
+                                        endif;
+                                    endforeach; 
+                                    if (empty($row['daftar_topping'])): ?>
+              <span class="rasa-badge" style="background:#f3f4f6;">-</span>
+              <?php endif; ?>
+            </td>
             <td><?= htmlspecialchars($row['asal_daerah'] ?: '-') ?></td>
             <td>
               <div class="action-buttons">
                 <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="btn-detail">👁️ Detail</a>
                 <a href="edit_produk.php?id=<?= $row['id_produk'] ?>" class="btn-edit">✏️ Edit</a>
                 <a href="relasi_produk_rasa.php?id_produk=<?= $row['id_produk'] ?>" class="btn-rasa">😋 Rasa</a>
+                <?php if ($row['kategori_produk'] === 'Makanan' || $row['kategori_produk'] === 'Minuman'): ?>
+                <a href="relasi_produk_topping.php?id_produk=<?= $row['id_produk'] ?>" class="btn-topping" style="padding: 5px 12px; border-radius: 8px; text-decoration: none; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">Topping</a>
+                <?php endif; ?>
                 <button
                   onclick="confirmDelete(<?= $row['id_produk'] ?>, '<?= htmlspecialchars($row['nama_produk']) ?>')"
                   class="btn-delete">🗑️ Hapus</button>

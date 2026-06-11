@@ -13,8 +13,8 @@ if (isset($_SESSION['message'])) {
     unset($_SESSION['message_type']);
 }
 
-// Ambil semua data kategori rasa
-$query = "SELECT * FROM kategori_rasa ORDER BY id_rasa ASC";
+// Ambil semua data kategori topping
+$query = "SELECT * FROM kategori_topping ORDER BY id_topping ASC";
 $result = mysqli_query($koneksi, $query);
 ?>
 
@@ -24,7 +24,7 @@ $result = mysqli_query($koneksi, $query);
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kelola Kategori Rasa - UMKM Ciwaruga</title>
+  <title>Kelola Kategori Topping - UMKM Ciwaruga</title>
   <link rel="stylesheet" href="style.css">
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
@@ -87,7 +87,7 @@ $result = mysqli_query($koneksi, $query);
     border-left: 4px solid #ef4444;
   }
 
-  .rasa-table {
+  .topping-table {
     background: white;
     border-radius: 20px;
     overflow: hidden;
@@ -210,6 +210,7 @@ $result = mysqli_query($koneksi, $query);
         <a href="umkm.php">Kelola UMKM</a>
         <a href="produk.php">Kelola Produk</a>
         <a href="kategori_rasa.php">Kelola Rasa</a>
+        <a href="kategori_topping.php" style="color: #2e6b4f; font-weight: 600;">Kelola Topping</a>
         <a href="bayar.php">Kelola Pembayaran</a>
         <a href="mitra.php">Kelola Mitra</a>
       </nav>
@@ -219,8 +220,8 @@ $result = mysqli_query($koneksi, $query);
 
   <div class="admin-container">
     <div class="admin-header">
-      <h1>Manajemen Kategori Rasa</h1>
-      <a href="tambah_kategori_rasa.php" class="btn-tambah">+ Tambah Rasa Baru</a>
+      <h1>Manajemen Kategori Topping</h1>
+      <a href="tambah_topping.php" class="btn-tambah">+ Tambah Topping Baru</a>
     </div>
 
     <?php if ($message): ?>
@@ -229,12 +230,12 @@ $result = mysqli_query($koneksi, $query);
     </div>
     <?php endif; ?>
 
-    <div class="rasa-table">
+    <div class="topping-table">
       <table>
         <thead>
           <tr>
             <th>ID</th>
-            <th>Jenis Rasa</th>
+            <th>Nama Topping</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -242,12 +243,12 @@ $result = mysqli_query($koneksi, $query);
           <?php if (mysqli_num_rows($result) > 0): ?>
           <?php while ($row = mysqli_fetch_assoc($result)): ?>
           <tr>
-            <td><?= $row['id_rasa'] ?></td>
-            <td><?= htmlspecialchars($row['jenis_rasa']) ?></td>
+            <td><?= $row['id_topping'] ?></td>
+            <td><?= htmlspecialchars($row['nama_topping']) ?></td>
             <td>
               <div class="action-buttons">
-                <a href="edit_kategori_rasa.php?id=<?= $row['id_rasa'] ?>" class="btn-edit">✏️ Edit</a>
-                <button onclick="confirmDelete(<?= $row['id_rasa'] ?>, '<?= htmlspecialchars($row['jenis_rasa']) ?>')"
+                <a href="edit_topping.php?id=<?= $row['id_topping'] ?>" class="btn-edit">✏️ Edit</a>
+                <button onclick="confirmDelete(<?= $row['id_topping'] ?>, '<?= htmlspecialchars($row['nama_topping']) ?>')"
                   class="btn-delete">🗑️ Hapus</button>
               </div>
             </td>
@@ -257,7 +258,7 @@ $result = mysqli_query($koneksi, $query);
           <tr>
             <td colspan="3">
               <div class="empty-state">
-                📭 Belum ada data kategori rasa
+                📭 Belum ada data kategori topping
               </div>
             </td>
           </tr>
@@ -282,9 +283,9 @@ $result = mysqli_query($koneksi, $query);
   <script>
   function confirmDelete(id, nama) {
     if (confirm(
-        `Apakah Anda yakin ingin menghapus kategori rasa "${nama}"?\n\nData yang terkait dengan rasa ini mungkin akan terpengaruh.`
+        `Apakah Anda yakin ingin menghapus kategori topping "${nama}"?\n\nData produk yang menggunakan topping ini mungkin akan terpengaruh.`
         )) {
-      window.location.href = `hapus_kategori_rasa.php?id=${id}`;
+      window.location.href = `hapus_topping.php?id=${id}`;
     }
   }
   </script>

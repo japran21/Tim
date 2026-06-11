@@ -15,15 +15,20 @@ while ($row = mysqli_fetch_assoc($countResult)) {
     $rasaCounts[$row['jenis_rasa']] = $row['total'];
 }
 
+$queryTopping   = "SELECT * FROM kategori_topping ORDER BY id_topping ASC";
+$resultTopping  = mysqli_query($koneksi, $queryTopping);
+
 $kategoriCounts = [];
 $katResult = mysqli_query($koneksi, "
     SELECT kategori_produk, COUNT(*) as total
     FROM produk
-    WHERE kategori_produk IN ('Makanan','Minuman')
+    WHERE kategori_produk IN ('Makanan','Minuman','Topping')
     GROUP BY kategori_produk
 ");
-while ($row = mysqli_fetch_assoc($katResult)) {
-    $kategoriCounts[$row['kategori_produk']] = $row['total'];
+if ($katResult) {
+    while ($row = mysqli_fetch_assoc($katResult)) {
+        $kategoriCounts[$row['kategori_produk']] = $row['total'];
+    }
 }
 
 $asalList   = [];
@@ -536,6 +541,28 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
           <button class="harga-preset-btn" onclick="filterByHarga(10000, 25000, this)">Rp 10K – 25K</button>
           <button class="harga-preset-btn" onclick="filterByHarga(20000, 50000, this)">Rp 20K – 50K</button>
         </div>
+
+        <div style="margin-top:12px; border-top:1px dashed #e5e7eb; padding-top:12px;">
+          <div
+            style="font-size:.72rem; font-weight:700; letter-spacing:.8px; text-transform:uppercase; color:#9ca3af; margin-bottom:8px;">
+            Cari Harga Sendiri</div>
+          <div style="display:flex; align-items:center; gap:4px; margin-bottom:8px;">
+            <input type="number" id="custom-harga-min" placeholder="Min" min="0" step="500"
+              style="width:100%; padding:7px 8px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:.82rem; font-family:inherit; background:#f9fafb; outline:none;"
+              onfocus="this.style.borderColor='#2e6b4f'" onblur="this.style.borderColor='#e5e7eb'">
+            <span style="color:#9ca3af; font-weight:700; flex-shrink:0;">–</span>
+            <input type="number" id="custom-harga-max" placeholder="Max" min="0" step="500"
+              style="width:100%; padding:7px 8px; border:1.5px solid #e5e7eb; border-radius:8px; font-size:.82rem; font-family:inherit; background:#f9fafb; outline:none;"
+              onfocus="this.style.borderColor='#2e6b4f'" onblur="this.style.borderColor='#e5e7eb'">
+          </div>
+          <button onclick="filterByHargaCustom()"
+            style="width:100%; padding:8px; background:#2e6b4f; color:#fff; border:none; border-radius:10px; font-size:.85rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background .18s;"
+            onmouseover="this.style.background='#1a4a35'" onmouseout="this.style.background='#2e6b4f'">
+            Cari
+          </button>
+          <div id="custom-harga-error"
+            style="display:none; color:#ef4444; font-size:.75rem; margin-top:6px; font-weight:600;"></div>
+        </div>
       </div>
     </aside>
 
@@ -575,7 +602,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
         <div class="hero-visual">
           <div class="visual-card card-1">
-            <div class="card-emoji">🍜</div>
+            <div class="card-emoji" style="display: none;"></div>
             <div>
               <div class="card-title">Street Food</div>
               <div class="card-sub">21 UMKM Terdaftar</div>
@@ -616,11 +643,12 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
           <h2>Kategori Produk</h2>
           <p>Pilih berdasarkan jenis hidangan</p>
         </div>
-        <div class="kategori-grid">
+        <div class="kategori-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 800px;">
           <?php
           $kategoriList = [
-            'Makanan' => ['emoji'=>'🍜','color'=>'#f59e0b','bg'=>'#fffbeb'],
-            'Minuman' => ['emoji'=>'🥤','color'=>'#3b82f6','bg'=>'#eff6ff'],
+            'Makanan' => ['emoji'=>'','color'=>'#f59e0b','bg'=>'#fffbeb'],
+            'Minuman' => ['emoji'=>'','color'=>'#3b82f6','bg'=>'#eff6ff'],
+            'Topping' => ['emoji'=>'','color'=>'#b45309','bg'=>'#fef3c7'],
           ];
           foreach ($kategoriList as $namaKat => $info):
               $totalKat = $kategoriCounts[$namaKat] ?? 0;
@@ -702,8 +730,9 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     'Asam': ''
   };
   const kategoriEmojiMap = {
-    'Makanan': '🍜',
-    'Minuman': '🥤'
+    'Makanan': '',
+    'Minuman': '',
+    'Topping': ''
   };
 
   let activeRasa = null,
@@ -742,6 +771,47 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     showResults('Harga <strong>' + escHtml(label) + '</strong>');
     const maxParam = max >= 50000 ? 9999999 : max;
     fetchAndRender('get_produk.php?harga_min=' + min + '&harga_max=' + maxParam, label, 'harga');
+  }
+
+  function filterByHargaCustom() {
+    var minVal = document.getElementById('custom-harga-min').value.trim();
+    var maxVal = document.getElementById('custom-harga-max').value.trim();
+    var errEl = document.getElementById('custom-harga-error');
+
+    if (minVal === '' && maxVal === '') {
+      errEl.textContent = 'Isi minimal harga min atau max.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    var min = minVal !== '' ? parseInt(minVal) : 0;
+    var max = maxVal !== '' ? parseInt(maxVal) : 9999999;
+
+    if (min < 0 || max < 0) {
+      errEl.textContent = 'Harga tidak boleh negatif.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    if (minVal !== '' && maxVal !== '' && min > max) {
+      errEl.textContent = 'Harga min tidak boleh lebih besar dari max.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    errEl.style.display = 'none';
+    document.querySelectorAll('.harga-preset-btn').forEach(function(b) {
+      b.classList.remove('active');
+    });
+
+    var fmtMin = minVal !== '' ? 'Rp ' + parseInt(minVal).toLocaleString('id-ID') : 'Rp 0';
+    var fmtMax = maxVal !== '' ? 'Rp ' + parseInt(maxVal).toLocaleString('id-ID') : 'tak terbatas';
+    var label = fmtMin + ' - ' + fmtMax;
+
+    clearAllActive();
+    activeHarga = label;
+    showResults('Harga <strong>' + escHtml(label) + '</strong>');
+    fetchAndRender('get_produk.php?harga_min=' + min + '&harga_max=' + max, label, 'harga');
   }
 
   function filterByRasa(namaRasa, el) {
@@ -813,8 +883,10 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
             `<div class="empty-state"><div class="empty-emoji">😕</div><p>Tidak ada produk untuk <strong>${escHtml(label)}</strong>.</p></div>`;
           return;
         }
-        const emoji = type === 'rasa' ? (emojiMap[label] || '🍽️') : type === 'kategori' ? (kategoriEmojiMap[label] ||
-          '') : type === 'asal' ? '📍' : '';
+        const emoji = type === 'rasa' ? (emojiMap[label] || '🍽️') : 
+                      type === 'topping' ? '' :
+                      type === 'kategori' ? (kategoriEmojiMap[label] || '') : 
+                      type === 'asal' ? '📍' : '';
         grid.innerHTML = data.map(p => {
           const fotoHtml = p.foto && p.foto !== 'NULL' ?
             `<img src="FOTO_UMKM/${escHtml(p.foto)}" alt="${escHtml(p.nama_umkm)}" class="product-card-img" onerror="this.parentElement.innerHTML='<span class=\\'product-card-emoji\\'>${emoji}</span>'">` :
@@ -828,6 +900,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               <div class="product-tags">
                 ${p.kategori_produk?`<span class="product-tag" style="background:#e0e7ff;color:#3730a3;"> ${escHtml(p.kategori_produk)}</span>`:''}
                 ${p.daftar_rasa?`<span class="product-tag" style="background:#f3f4f6;color:#6b7280;">${escHtml(p.daftar_rasa)}</span>`:''}
+                ${p.daftar_topping?`<span class="product-tag" style="background:#fef3c7;color:#92400e;">${escHtml(p.daftar_topping)}</span>`:''}
                 ${p.asal_daerah && p.asal_daerah !== 'NULL'?`<span class="product-tag tag-asal">📍 ${escHtml(p.asal_daerah)}</span>`:''}
               </div>
               <div class="product-harga">Rp ${fmtRp(p.harga)}</div>

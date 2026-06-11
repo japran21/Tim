@@ -507,7 +507,7 @@ $totalUMKM = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as total
         <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Rasa</a>
         <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Pembayaran</a>
         <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Mitra</a>
-        <a href="jadwal_umkm.php" class="sidebar-link active"><span class="sidebar-icon">🕐</span> Jadwal Buka</a>
+        <a href="jadwal_umkm.php" class="sidebar-link active"><span class="sidebar-icon"></span> Jadwal Buka</a>
       </div>
     </aside>
 
@@ -515,7 +515,7 @@ $totalUMKM = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as total
     <div class="main-content">
 
       <div class="page-header">
-        <h1 class="page-title">🕐 Jadwal Operasional UMKM</h1>
+        <h1 class="page-title"> Jadwal Operasional UMKM</h1>
         <p class="page-subtitle">Lihat UMKM mana yang sedang buka pada hari dan jam tertentu</p>
       </div>
 
@@ -535,8 +535,7 @@ $totalUMKM = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as total
             <input type="time" name="jam" class="filter-input" value="<?= htmlspecialchars($jamFilter) ?>">
           </div>
           <button type="submit" class="btn-cari">🔍 Cari</button>
-          <a href="jadwal_umkm.php?hari=<?= $hariSekarangID ?>&jam=<?= $jamSekarang ?>" class="btn-sekarang">⏰
-            Sekarang</a>
+          <a href="jadwal_umkm.php?hari=<?= $hariSekarangID ?>&jam=<?= $jamSekarang ?>" class="btn-sekarang">Sekarang</a>
         </div>
       </form>
 
@@ -592,8 +591,12 @@ $totalUMKM = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as total
         };
         $jamBuka  = date('H:i', strtotime($u['jam_buka']));
         $jamTutup = date('H:i', strtotime($u['jam_tutup']));
-        $fotoPath = 'uploads/' . $u['foto'];
-        $adaFoto  = $u['foto'] && file_exists(__DIR__ . '/' . $fotoPath);
+        $namaFoto = trim($u['foto']);
+        if (strpos($namaFoto, 'FOTO_UMKM/') === 0) {
+            $namaFoto = substr($namaFoto, 10);
+        }
+        $fotoPath = 'FOTO_UMKM/' . $namaFoto;
+        $adaFoto  = $u['foto'] && $u['foto'] !== 'NULL' && file_exists(__DIR__ . '/' . $fotoPath);
       ?>
         <a href="detail_produk.php?id=<?= $u['id_umkm'] ?>" class="umkm-card">
           <?php if ($adaFoto): ?>
@@ -611,7 +614,7 @@ $totalUMKM = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as total
             <?php endif; ?>
 
             <div class="umkm-footer">
-              <span class="jam-badge">🕐 <?= $jamBuka ?> – <?= $jamTutup ?></span>
+              <span class="jam-badge"> <?= $jamBuka ?> – <?= $jamTutup ?></span>
               <span class="halal-badge <?= $halalClass ?>"><?= $halalLabel ?></span>
             </div>
           </div>

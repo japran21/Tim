@@ -36,11 +36,14 @@ if (!empty($_GET['rasa'])) {
                 p.asal_daerah,
                 u.nama_umkm,
                 u.foto,
-                GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa
+                GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa,
+                GROUP_CONCAT(DISTINCT kt.nama_topping ORDER BY kt.nama_topping SEPARATOR ', ') AS daftar_topping
             FROM produk p
             JOIN umkm u  ON p.id_umkm  = u.id_umkm
             JOIN produk_rasa pr  ON p.id_produk = pr.id_produk
             JOIN kategori_rasa kr ON pr.id_rasa  = kr.id_rasa
+            LEFT JOIN produk_topping pt ON p.id_produk = pt.id_produk
+            LEFT JOIN kategori_topping kt ON pt.id_topping = kt.id_topping
             WHERE pr.id_rasa = $id_rasa
             GROUP BY p.id_produk, u.nama_umkm, u.foto
             ORDER BY p.nama_produk ASC
@@ -63,6 +66,57 @@ if (!empty($_GET['rasa'])) {
 
     } else {
         echo json_encode(['error' => "Rasa '$rasa' tidak ditemukan"]);
+        exit;
+    }
+
+} elseif (!empty($_GET['topping'])) {
+    $topping = mysqli_real_escape_string($koneksi, trim($_GET['topping']));
+
+    $queryTopping = "SELECT id_topping FROM kategori_topping WHERE nama_topping = '$topping'";
+    $resultTopping = mysqli_query($koneksi, $queryTopping);
+
+    if ($rowTopping = mysqli_fetch_assoc($resultTopping)) {
+        $id_topping = (int) $rowTopping['id_topping'];
+
+        $sql = "
+            SELECT
+                p.id_produk,
+                p.nama_produk,
+                p.harga,
+                p.kategori_produk,
+                p.asal_daerah,
+                u.nama_umkm,
+                u.foto,
+                GROUP_CONCAT(DISTINCT kr.jenis_rasa ORDER BY kr.jenis_rasa SEPARATOR ', ') AS daftar_rasa,
+                GROUP_CONCAT(DISTINCT kt.nama_topping ORDER BY kt.nama_topping SEPARATOR ', ') AS daftar_topping
+            FROM produk p
+            JOIN umkm u  ON p.id_umkm  = u.id_umkm
+            LEFT JOIN produk_rasa pr  ON p.id_produk = pr.id_produk
+            LEFT JOIN kategori_rasa kr ON pr.id_rasa  = kr.id_rasa
+            JOIN produk_topping pt ON p.id_produk = pt.id_produk
+            JOIN kategori_topping kt ON pt.id_topping = kt.id_topping
+            WHERE pt.id_topping = $id_topping
+            GROUP BY p.id_produk, u.nama_umkm, u.foto
+            ORDER BY p.nama_produk ASC
+            LIMIT 50
+        ";
+
+        $query = mysqli_query($koneksi, $sql);
+
+        if ($query) {
+            while ($row = mysqli_fetch_assoc($query)) {
+                $row['foto']  = sanitasiFoto($row['foto']);
+                $row['harga'] = (float) $row['harga'];
+                $result[]     = $row;
+            }
+        } else {
+            error_log("get_produk.php [topping] query error: " . mysqli_error($koneksi));
+            echo json_encode(['error' => 'Terjadi kesalahan saat mengambil data.']);
+            exit;
+        }
+
+    } else {
+        echo json_encode(['error' => "Topping '$topping' tidak ditemukan"]);
         exit;
     }
 

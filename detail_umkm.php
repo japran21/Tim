@@ -553,9 +553,9 @@ $colorMitra = [
             <div class="product-detail">
               <span class="product-category">
                 <?php 
-                if ($produk['kategori_produk'] === 'Makanan') echo '🍜 ';
-                elseif ($produk['kategori_produk'] === 'Minuman') echo '🥤 ';
-                elseif ($produk['kategori_produk'] === 'Topping') echo '🍯 ';
+                if ($produk['kategori_produk'] === 'Makanan') echo '';
+                elseif ($produk['kategori_produk'] === 'Minuman') echo '';
+                elseif ($produk['kategori_produk'] === 'Topping') echo '';
                 else echo '🍿 ';
                 echo htmlspecialchars($produk['kategori_produk']);
                 ?>

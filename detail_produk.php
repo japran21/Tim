@@ -52,6 +52,20 @@ while ($row = mysqli_fetch_assoc($resultRasa)) {
     $rasaList[] = $row;
 }
 
+// 2b. Ambil daftar topping produk ini
+$queryTopping = "
+    SELECT kt.id_topping, kt.nama_topping
+    FROM produk_topping pt
+    JOIN kategori_topping kt ON pt.id_topping = kt.id_topping
+    WHERE pt.id_produk = $id_produk
+    ORDER BY kt.nama_topping ASC
+";
+$resultTopping = mysqli_query($koneksi, $queryTopping);
+$toppingList = [];
+while ($row = mysqli_fetch_assoc($resultTopping)) {
+    $toppingList[] = $row;
+}
+
 // 3. Ambil waktu operasional UMKM
 $id_umkm = (int)$produk['id_umkm'];
 $queryWaktu = "SELECT * FROM waktu_operasional WHERE id_umkm = $id_umkm ORDER BY 
@@ -65,12 +79,15 @@ while ($row = mysqli_fetch_assoc($resultWaktu)) {
 // 4. Ambil produk lain dari UMKM yang sama (untuk "Produk Lainnya")
 $queryLainnya = "
     SELECT p.id_produk, p.nama_produk, p.harga, p.kategori_produk,
-           GROUP_CONCAT(kr.jenis_rasa SEPARATOR ', ') as daftar_rasa,
+           GROUP_CONCAT(DISTINCT kr.jenis_rasa SEPARATOR ', ') as daftar_rasa,
+           GROUP_CONCAT(DISTINCT kt.nama_topping SEPARATOR ', ') as daftar_topping,
            u.foto
     FROM produk p
     JOIN umkm u ON p.id_umkm = u.id_umkm
     LEFT JOIN produk_rasa pr ON p.id_produk = pr.id_produk
     LEFT JOIN kategori_rasa kr ON pr.id_rasa = kr.id_rasa
+    LEFT JOIN produk_topping pt ON p.id_produk = pt.id_produk
+    LEFT JOIN kategori_topping kt ON pt.id_topping = kt.id_topping
     WHERE p.id_umkm = $id_umkm AND p.id_produk != $id_produk
     GROUP BY p.id_produk, u.foto
     ORDER BY p.nama_produk ASC
@@ -113,16 +130,40 @@ if ($resultMitra) {
 
 // Emoji maps
 $emojiKategori = [
-    'Makanan' => '🍜',
-    'Minuman' => '🥤',
-    'Topping' => '🍯',
+    'Makanan' => '',
+    'Minuman' => '',
+    'Topping' => '',
 ];
 $emojiRasa = [
     'Asin'  => '🧂',
     'Gurih' => '🍗',
-    'Manis' => '🍯',
+    'Manis' => '',
     'Pedas' => '🌶️',
     'Asam'  => '🍋',
+];
+$emojiTopping = [
+    'Keju' => '',
+    'Coklat' => '',
+    'Susu' => '',
+    'Kacang' => '',
+    'Oreo' => '',
+    'Pisang' => '',
+    'Blueberry' => '',
+    'Mozzarella' => '',
+    'Mayo' => '',
+    'Sambal' => '',
+];
+$colorTopping = [
+    'Keju' => '#f59e0b',
+    'Coklat' => '#78350f',
+    'Susu' => '#9ca3af',
+    'Kacang' => '#b45309',
+    'Oreo' => '#1f2937',
+    'Pisang' => '#eab308',
+    'Blueberry' => '#4f46e5',
+    'Mozzarella' => '#fbbf24',
+    'Mayo' => '#fcd34d',
+    'Sambal' => '#ef4444',
 ];
 $iconMitra = [
     'GoFood' => '', 'GrabFood' => '', 'ShopeeFood' => '',
@@ -843,6 +884,20 @@ foreach ($waktuList as $w) {
             <div style="color: #9ca3af; font-size: 0.85rem; font-style: italic;">Belum ada kategori rasa yang
               ditentukan.</div>
             <?php endif; ?>
+
+            <?php if (!empty($toppingList)): ?>
+            <div class="rasa-tags" style="margin-top: 12px;">
+              <?php foreach ($toppingList as $topping): 
+                $namaTopping = htmlspecialchars($topping['nama_topping']);
+                $emoji = $emojiTopping[$topping['nama_topping']] ?? '';
+                $color = $colorTopping[$topping['nama_topping']] ?? '#6b7280';
+              ?>
+              <span class="rasa-tag" style="background:#f8fafc;color:<?= $color ?>;border:1px solid #e2e8f0;">
+                <?= $emoji ?> <?= $namaTopping ?>
+              </span>
+              <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
           </div>
         </div>
       </div>
@@ -994,6 +1049,13 @@ foreach ($waktuList as $w) {
             <div class="other-card-rasa">
               <?php foreach (explode(', ', $lain['daftar_rasa']) as $r): ?>
               <span><?= htmlspecialchars($r) ?></span>
+              <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+            <?php if ($lain['daftar_topping']): ?>
+            <div class="other-card-rasa">
+              <?php foreach (explode(', ', $lain['daftar_topping']) as $t): ?>
+              <span style="background:#fef3c7; color:#92400e;"><?= htmlspecialchars($t) ?></span>
               <?php endforeach; ?>
             </div>
             <?php endif; ?>
