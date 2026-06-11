@@ -82,10 +82,11 @@ while ($row = mysqli_fetch_assoc($resultLainnya)) {
 
 // 5. Ambil metode pembayaran yang diterima UMKM
 $queryBayar = "
-    SELECT b.id_bayar, b.metode_pembayaran
-    FROM bayar b
-    WHERE b.id_umkm = $id_umkm
-    ORDER BY b.metode_pembayaran ASC
+    SELECT up.id_umkm_bayar AS id_bayar, mp.nama_metode AS metode_pembayaran
+    FROM umkm_pembayaran up
+    JOIN metode_pembayaran mp ON up.id_metode = mp.id_metode
+    WHERE up.id_umkm = $id_umkm
+    ORDER BY mp.nama_metode ASC
 ";
 $resultBayar = mysqli_query($koneksi, $queryBayar);
 $bayarList = [];
@@ -802,7 +803,8 @@ foreach ($waktuList as $w) {
               <?php endforeach; ?>
             </div>
             <?php else: ?>
-            <div style="color: #9ca3af; font-size: 0.85rem; font-style: italic;">Belum ada kategori rasa yang ditentukan.</div>
+            <div style="color: #9ca3af; font-size: 0.85rem; font-style: italic;">Belum ada kategori rasa yang
+              ditentukan.</div>
             <?php endif; ?>
           </div>
         </div>
@@ -884,7 +886,8 @@ foreach ($waktuList as $w) {
               <span class="schedule-closed">🚫 Tutup / Libur</span>
               <?php else: ?>
               <span class="schedule-time">
-                🟢 <?= date('H:i', strtotime($waktu['jam_buka'])) ?> - <?= date('H:i', strtotime($waktu['jam_tutup'])) ?> WIB
+                🟢 <?= date('H:i', strtotime($waktu['jam_buka'])) ?> -
+                <?= date('H:i', strtotime($waktu['jam_tutup'])) ?> WIB
               </span>
               <?php endif; ?>
             </div>

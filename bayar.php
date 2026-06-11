@@ -224,7 +224,7 @@ $result = mysqli_query($koneksi, $query);
           <tr>
             <th>ID</th>
             <th>Metode Pembayaran</th>
-            <th>Icon</th>
+            <th></th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -232,15 +232,14 @@ $result = mysqli_query($koneksi, $query);
           <?php if (mysqli_num_rows($result) > 0): ?>
           <?php 
                         $iconMap = [
-                            'Cash' => '💵',
-                            'QRIS' => '📱',
-                            'Dana' => '💜',
-                            'OVO' => '🟣',
-                            'GoPay' => '🟢',
-                            'LinkAja' => '🔵'
+                            'Cash' => '',
+                            'QRIS' => '',
+                            'OVO' => '',
+                            'GoPay' => '',
+                            'LinkAja' => ''
                         ];
                         while ($row = mysqli_fetch_assoc($result)): 
-                            $icon = $iconMap[$row['nama_metode']] ?? '💰';
+                            $icon = $iconMap[$row['nama_metode']] ?? '';
                         ?>
           <tr>
             <td><?= $row['id_metode'] ?></td>
