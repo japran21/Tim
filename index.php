@@ -132,7 +132,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     width: 100%;
   }
 
-  /* override section max-width when sidebar is present */
   .main-content .hero,
   .main-content .flavor-section,
   .main-content .kategori-section,
@@ -141,7 +140,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     max-width: 100%;
   }
 
-  /* hero jadi 1 kolom center */
   .main-content .hero {
     grid-template-columns: 1fr;
     text-align: center;
@@ -169,11 +167,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     max-width: 560px;
   }
 
-  .main-content .search-suggestions {
-    justify-content: center;
-  }
-
-  /* ===== CENTERING ALL SECTIONS ===== */
   .flavor-section,
   .kategori-section,
   .asal-section,
@@ -240,12 +233,19 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     min-width: 0;
   }
 
+  /* Foto produk di card */
   .product-card-top--foto {
     padding: 0 !important;
     overflow: hidden;
+    background: #f8fafc;
+    border-radius: 16px 16px 0 0;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .product-card-top--foto .product-card-img {
+  .product-card-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -253,11 +253,11 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     transition: transform .3s ease;
   }
 
-  .product-card:hover .product-card-top--foto .product-card-img {
+  .product-card:hover .product-card-img {
     transform: scale(1.05);
   }
 
-  .product-card-top--foto .product-card-emoji {
+  .product-card-emoji {
     font-size: 2.5rem;
     display: flex;
     align-items: center;
@@ -266,7 +266,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     height: 100%;
   }
 
-  /* ===== KATEGORI SECTION ===== */
+  /* Kategori section */
   .kategori-section {
     padding: 0 32px 56px;
   }
@@ -352,7 +352,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     margin-top: 2px;
   }
 
-  /* ===== ASAL DAERAH SECTION ===== */
+  /* Asal daerah section */
   .asal-section {
     padding: 0 32px 64px;
   }
@@ -423,35 +423,20 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     color: #92400e;
   }
 
-  /* ===== HARGA SECTION ===== */
-  .harga-section {
-    padding: 0 32px 56px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-  }
-
-  .harga-presets {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    max-width: 900px;
-    width: 100%;
-    justify-content: center;
-  }
-
+  /* Harga section di sidebar */
   .harga-preset-btn {
     background: #f3f4f6;
     border: 1.5px solid #e5e7eb;
-    border-radius: 50px;
-    padding: 9px 20px;
+    border-radius: 10px;
+    padding: 7px 12px;
     font-size: .875rem;
     font-weight: 600;
     color: #374151;
     cursor: pointer;
     transition: all .18s ease;
     white-space: nowrap;
+    width: 100%;
+    text-align: left;
   }
 
   .harga-preset-btn:hover {
@@ -469,7 +454,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     box-shadow: 0 4px 12px rgba(46, 107, 79, .30);
   }
 
-  /* ===== RESPONSIVE ===== */
   @media (max-width: 900px) {
     .sidebar {
       display: none;
@@ -511,7 +495,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
 <body>
 
-  <!-- ===== NAVBAR: hanya Beranda ===== -->
   <header class="navbar">
     <div class="nav-inner">
       <a href="index.php" class="brand" style="text-decoration:none;">
@@ -530,7 +513,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   <div class="page-body">
 
-    <!-- ===== SIDEBAR KIRI ===== -->
+    <!-- SIDEBAR KIRI (dari kode 2 + filter harga) -->
     <aside class="sidebar">
       <div class="sidebar-section">
         <span class="sidebar-label">Menu Kelola</span>
@@ -540,29 +523,26 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">💳</span> Kelola Pembayaran</a>
         <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">🤝</span> Kelola Mitra</a>
         <a href="jadwal_umkm.php" class="sidebar-link"><span class="sidebar-icon">🕐</span> Jadwal Buka</a>
+        <a href="detail_pembayaran.php" class="sidebar-link"><span class="sidebar-icon">💰</span> Detail Pembayaran</a>
       </div>
 
-      <!-- SIDEBAR: Filter Harga -->
+      <!-- Filter Harga di Sidebar (dari kode 1) -->
       <div class="sidebar-section"
         style="padding: 12px 16px 16px; border-top: 1px solid rgba(45,106,79,.08); margin-top: 8px;">
         <span class="sidebar-label">💰 Range Harga</span>
         <div style="display:flex; flex-direction:column; gap:6px;">
-          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
-            onclick="filterByHarga(0, 10000, this)">Rp 0 – 10K</button>
-          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
-            onclick="filterByHarga(0, 20000, this)">Rp 0 – 20K</button>
-          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
-            onclick="filterByHarga(10000, 25000, this)">Rp 10K – 25K</button>
-          <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
-            onclick="filterByHarga(20000, 50000, this)">Rp 20K – 50K</button>
+          <button class="harga-preset-btn" onclick="filterByHarga(0, 10000, this)">Rp 0 – 10K</button>
+          <button class="harga-preset-btn" onclick="filterByHarga(0, 20000, this)">Rp 0 – 20K</button>
+          <button class="harga-preset-btn" onclick="filterByHarga(10000, 25000, this)">Rp 10K – 25K</button>
+          <button class="harga-preset-btn" onclick="filterByHarga(20000, 50000, this)">Rp 20K – 50K</button>
         </div>
       </div>
     </aside>
 
-    <!-- ===== KONTEN UTAMA ===== -->
+    <!-- KONTEN UTAMA -->
     <div class="main-content">
 
-      <!-- HERO -->
+      <!-- HERO SECTION -->
       <section class="hero">
         <div class="hero-bg-pattern"></div>
         <div class="hero-content">
@@ -604,7 +584,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
       </section>
 
-      <!-- FILTER RASA (rata kiri) -->
+      <!-- FILTER RASA -->
       <section class="flavor-section">
         <div class="flavor-section-header">
           <h2>Cari Berdasarkan Rasa</h2>
@@ -630,7 +610,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
       </section>
 
-      <!-- FILTER KATEGORI (tengah) -->
+      <!-- FILTER KATEGORI -->
       <section class="kategori-section">
         <div class="flavor-section-header" style="text-align:center;">
           <h2>Kategori Produk</h2>
@@ -658,7 +638,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
       </section>
 
-      <!-- FILTER ASAL DAERAH (rata kiri) -->
+      <!-- FILTER ASAL DAERAH -->
       <section class="asal-section">
         <div class="flavor-section-header">
           <h2>Asal Daerah</h2>
@@ -700,8 +680,8 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         <div class="results-grid" id="resultsGrid"></div>
       </section>
 
-    </div><!-- /.main-content -->
-  </div><!-- /.page-body -->
+    </div>
+  </div>
 
   <footer class="footer">
     <div class="footer-inner">
@@ -731,23 +711,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     activeAsal = null,
     activeHarga = null;
 
-  // ===== FILTER HARGA =====
-  function filterByHarga(min, max, el) {
-    const label = el.textContent.trim();
-    if (activeHarga === label) {
-      resetFilter();
-      return;
-    }
-    clearAllActive();
-    activeHarga = label;
-    document.querySelectorAll('.harga-preset-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
-    showResults('💰 Harga <strong>' + escHtml(label) + '</strong>');
-    const maxParam = max >= 50000 ? 9999999 : max;
-    fetchAndRender('get_produk.php?harga_min=' + min + '&harga_max=' + maxParam, label, 'harga');
-  }
-  // ===== END FILTER HARGA =====
-
   function clearAllActive() {
     activeRasa = activeKategori = activeAsal = activeHarga = null;
     document.querySelectorAll('.flavor-card,.kategori-card,.asal-card,.harga-preset-btn').forEach(c => c.classList
@@ -763,6 +726,22 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
       behavior: 'smooth',
       block: 'start'
     }), 50);
+  }
+
+  // Filter Harga (dari kode 1)
+  function filterByHarga(min, max, el) {
+    const label = el.textContent.trim();
+    if (activeHarga === label) {
+      resetFilter();
+      return;
+    }
+    clearAllActive();
+    activeHarga = label;
+    document.querySelectorAll('.harga-preset-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    showResults('💰 Harga <strong>' + escHtml(label) + '</strong>');
+    const maxParam = max >= 50000 ? 9999999 : max;
+    fetchAndRender('get_produk.php?harga_min=' + min + '&harga_max=' + maxParam, label, 'harga');
   }
 
   function filterByRasa(namaRasa, el) {
@@ -837,7 +816,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         const emoji = type === 'rasa' ? (emojiMap[label] || '🍽️') : type === 'kategori' ? (kategoriEmojiMap[label] ||
           '📂') : type === 'asal' ? '📍' : '🍽️';
         grid.innerHTML = data.map(p => {
-          const fotoHtml = p.foto ?
+          const fotoHtml = p.foto && p.foto !== 'NULL' ?
             `<img src="FOTO_UMKM/${escHtml(p.foto)}" alt="${escHtml(p.nama_umkm)}" class="product-card-img" onerror="this.parentElement.innerHTML='<span class=\\'product-card-emoji\\'>${emoji}</span>'">` :
             `<span class="product-card-emoji">${emoji}</span>`;
           return `
@@ -849,7 +828,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               <div class="product-tags">
                 ${p.kategori_produk?`<span class="product-tag" style="background:#e0e7ff;color:#3730a3;">📂 ${escHtml(p.kategori_produk)}</span>`:''}
                 ${p.daftar_rasa?`<span class="product-tag" style="background:#f3f4f6;color:#6b7280;">${escHtml(p.daftar_rasa)}</span>`:''}
-                ${p.asal_daerah&&p.asal_daerah!=='NULL'?`<span class="product-tag tag-asal">📍 ${escHtml(p.asal_daerah)}</span>`:''}
+                ${p.asal_daerah && p.asal_daerah !== 'NULL'?`<span class="product-tag tag-asal">📍 ${escHtml(p.asal_daerah)}</span>`:''}
               </div>
               <div class="product-harga">Rp ${fmtRp(p.harga)}</div>
             </div>

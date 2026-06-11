@@ -58,6 +58,31 @@ while ($row = mysqli_fetch_assoc($resultProduk)) {
     $produkList[] = $row;
 }
 
+// 5. Ambil metode pembayaran yang diterima UMKM (BARU dari kode 2)
+$queryMetode = "SELECT mp.id_metode, mp.nama_metode, mp.nomor_rekening, mp.nama_pemilik_rekening
+                FROM umkm_pembayaran up
+                JOIN metode_pembayaran mp ON up.id_metode = mp.id_metode
+                WHERE up.id_umkm = $id_umkm";
+$resultMetode = mysqli_query($koneksi, $queryMetode);
+$metodeList = [];
+while ($row = mysqli_fetch_assoc($resultMetode)) {
+    $metodeList[] = $row;
+}
+
+// Konfigurasi icon & warna untuk metode pembayaran (dari kode 2)
+$metodeConfig = [
+    'Cash'  => ['icon' => '💵', 'color' => '#16a34a', 'bg' => '#dcfce7', 'desc' => 'Pembayaran tunai langsung'],
+    'QRIS'  => ['icon' => '📱', 'color' => '#7c3aed', 'bg' => '#ede9fe', 'desc' => 'Scan QR Code universal'],
+    'Dana'  => ['icon' => '💙', 'color' => '#2563eb', 'bg' => '#dbeafe', 'desc' => 'Dompet digital Dana'],
+    'OVO'   => ['icon' => '💜', 'color' => '#7c3aed', 'bg' => '#f3e8ff', 'desc' => 'Dompet digital OVO'],
+    'Gopay' => ['icon' => '🟢', 'color' => '#00b14f', 'bg' => '#d1fae5', 'desc' => 'Dompet digital Gopay'],
+    'Transfer Bank' => ['icon' => '🏦', 'color' => '#ef4444', 'bg' => '#fee2e2', 'desc' => 'Transfer antar bank'],
+];
+
+function getMetodeConfig($nama, $config) {
+    return $config[$nama] ?? ['icon' => '💳', 'color' => '#6b7280', 'bg' => '#f3f4f6', 'desc' => 'Metode pembayaran'];
+}
+
 // Emoji mapping untuk mitra
 $iconMitra = [
     'GoFood' => '🟢',
@@ -69,7 +94,7 @@ $iconMitra = [
 ];
 $colorMitra = [
     'GoFood' => '#00b14f',
-    'GrabFood' => '#00b14f',
+    'GrabFood' => '#ee4d2d',
     'ShopeeFood' => '#ee4d2d',
     'Gojek' => '#00b14f',
     'Grab' => '#00b14f',
@@ -216,6 +241,33 @@ $colorMitra = [
     font-weight: 600;
   }
 
+  /* Style untuk metode pembayaran (dari kode 2) */
+  .metode-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .metode-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 40px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+  }
+
+  .metode-detail {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    color: #6b7280;
+    padding-left: 28px;
+  }
+
   .schedule-row {
     display: flex;
     justify-content: space-between;
@@ -257,6 +309,12 @@ $colorMitra = [
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .product-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
   .product-detail h4 {
@@ -369,6 +427,8 @@ $colorMitra = [
         <a href="kategori_rasa.php">Kelola Rasa</a>
         <a href="bayar.php">Kelola Pembayaran</a>
         <a href="mitra.php">Kelola Mitra</a>
+        <a href="jadwal_umkm.php">Jadwal Buka</a>
+        <a href="detail_pembayaran.php">Detail Pembayaran</a>
       </nav>
       <div class="nav-actions"></div>
     </div>
@@ -383,8 +443,12 @@ $colorMitra = [
     <div class="sidebar">
       <div class="card" style="text-align: center;">
         <div class="profile-header">
-          <?php if ($umkm['foto'] && file_exists($umkm['foto'])): ?>
-          <img src="<?= htmlspecialchars($umkm['foto']) ?>" class="profile-foto" alt="Foto">
+          <?php 
+          $fotoPath = 'FOTO_UMKM/' . $umkm['foto'];
+          $adaFoto = $umkm['foto'] && file_exists(__DIR__ . '/' . $fotoPath);
+          ?>
+          <?php if ($adaFoto): ?>
+          <img src="<?= htmlspecialchars($fotoPath) ?>" class="profile-foto" alt="Foto">
           <?php else: ?>
           <div class="profile-no-foto">🏪</div>
           <?php endif; ?>
@@ -452,6 +516,43 @@ $colorMitra = [
         </div>
       </div>
       <?php endif; ?>
+
+      <!-- Metode Pembayaran (BARU dari kode 2) -->
+      <div class="card">
+        <div class="card-title">💳 Metode Pembayaran</div>
+        <?php if (empty($metodeList)): ?>
+        <p style="color: #6b7280; font-style: italic;">UMKM ini belum mendaftarkan metode pembayaran.</p>
+        <?php else: ?>
+        <div class="metode-tags">
+          <?php foreach ($metodeList as $metode):
+              $cfg = getMetodeConfig($metode['nama_metode'], $metodeConfig);
+            ?>
+          <div class="metode-tag"
+            style="background:<?= $cfg['bg'] ?>; color:<?= $cfg['color'] ?>; border-color:<?= $cfg['color'] ?>20;">
+            <?= $cfg['icon'] ?> <?= htmlspecialchars($metode['nama_metode']) ?>
+          </div>
+          <?php endforeach; ?>
+        </div>
+        <?php 
+          // Tampilkan detail rekening jika ada (khusus transfer bank/e-wallet tertentu)
+          $detailMetode = array_filter($metodeList, function($m) {
+              return in_array($m['nama_metode'], ['Dana', 'OVO', 'Gopay', 'Transfer Bank']) && !empty($m['nomor_rekening']);
+          });
+          ?>
+        <?php foreach ($detailMetode as $metode): ?>
+        <div class="metode-detail">
+          <?php if ($metode['nama_metode'] == 'Transfer Bank'): ?>
+          💳 No. Rekening: <?= htmlspecialchars($metode['nomor_rekening']) ?>
+          <?php if ($metode['nama_pemilik_rekening']): ?>
+          (a.n. <?= htmlspecialchars($metode['nama_pemilik_rekening']) ?>)
+          <?php endif; ?>
+          <?php else: ?>
+          📱 ID: <?= htmlspecialchars($metode['nomor_rekening']) ?>
+          <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -493,7 +594,7 @@ $colorMitra = [
           <?php else: ?>
           <?php foreach ($produkList as $produk): ?>
           <a href="detail_produk.php?id=<?= $produk['id_produk'] ?>" class="product-card"
-            style="text-decoration:none;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
+            style="text-decoration:none;cursor:pointer;">
             <div class="product-detail">
               <span class="product-category">
                 <?php 
