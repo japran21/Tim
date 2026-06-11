@@ -262,7 +262,7 @@ $result = mysqli_query($koneksi, $query);
     <div class="admin-header">
       <h1>Mitra Platform</h1>
       <div style="display: flex; gap: 12px;">
-        <a href="relasi_mitra_umkm.php" class="btn-relasi">🔗 Kelola Relasi UMKM-Mitra</a>
+        <a href="relasi_umkm_mitra.php" class="btn-relasi">🔗 Kelola Relasi UMKM-Mitra</a>
         <a href="tambah_mitra.php" class="btn-tambah">+ Tambah Mitra Baru</a>
       </div>
     </div>

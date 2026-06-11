@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $_SESSION['message']      = 'Relasi mitra berhasil diupdate!';
     $_SESSION['message_type'] = 'success';
-    header("Location: relasi_mitra_umkm.php?id_umkm=$id_umkm");
+    header("Location: relasi_umkm_mitra.php?id_umkm=$id_umkm");
     exit;
 }
 
@@ -43,7 +43,7 @@ if (isset($_GET['hapus_mitra'], $_GET['id_mitra'], $_GET['id_umkm'])) {
     mysqli_query($koneksi, "DELETE FROM umkm_mitra WHERE id_umkm=$id_umkm AND id_mitra=$id_mitra");
     $_SESSION['message']      = 'Mitra berhasil dihapus dari UMKM.';
     $_SESSION['message_type'] = 'success';
-    header("Location: relasi_mitra_umkm.php?id_umkm=$id_umkm");
+    header("Location: relasi_umkm_mitra.php?id_umkm=$id_umkm");
     exit;
 }
 
@@ -443,7 +443,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
     <!-- Pilih UMKM -->
     <div class="card">
       <label class="umkm-select-label">Pilih UMKM yang ingin dikelola relasinya:</label>
-      <select class="umkm-select" onchange="if(this.value) window.location='relasi_mitra_umkm.php?id_umkm='+this.value">
+      <select class="umkm-select" onchange="if(this.value) window.location='relasi_umkm_mitra.php?id_umkm='+this.value">
         <option value="">— Pilih UMKM —</option>
         <?php foreach ($all_umkm as $u): ?>
         <option value="<?= $u['id_umkm'] ?>" <?= $selected_id==$u['id_umkm'] ? 'selected' : '' ?>>

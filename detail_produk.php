@@ -83,6 +83,7 @@ while ($row = mysqli_fetch_assoc($resultLainnya)) {
 // 5. Ambil metode pembayaran yang diterima UMKM
 $queryBayar = "
     SELECT up.id_umkm_bayar AS id_bayar, mp.nama_metode AS metode_pembayaran
+    SELECT mp.id_metode as id_bayar, mp.nama_metode as metode_pembayaran
     FROM umkm_pembayaran up
     JOIN metode_pembayaran mp ON up.id_metode = mp.id_metode
     WHERE up.id_umkm = $id_umkm
