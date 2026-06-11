@@ -128,11 +128,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     align-items: center;
   }
 
-<<<<<<< HEAD
   .main-content>* {
-=======
-  .main-content > * {
->>>>>>> 25988e3e03b359cd2aac85784b3cf389b719de42
     width: 100%;
   }
 
@@ -242,7 +238,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     width: 100%;
     max-width: 280px;
     min-width: 0;
-<<<<<<< HEAD
   }
 
   .product-card-top--foto {
@@ -269,8 +264,6 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     justify-content: center;
     width: 100%;
     height: 100%;
-=======
->>>>>>> 25988e3e03b359cd2aac85784b3cf389b719de42
   }
 
   /* ===== KATEGORI SECTION ===== */
@@ -541,17 +534,18 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     <aside class="sidebar">
       <div class="sidebar-section">
         <span class="sidebar-label">Menu Kelola</span>
-        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola UMKM</a>
-        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Produk</a>
-        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Rasa</a>
-        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Pembayaran</a>
-        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Mitra</a>
+        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">🏪</span> Kelola UMKM</a>
+        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">🍽️</span> Kelola Produk</a>
+        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">🌶️</span> Kelola Rasa</a>
+        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">💳</span> Kelola Pembayaran</a>
+        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">🤝</span> Kelola Mitra</a>
+        <a href="jadwal_umkm.php" class="sidebar-link"><span class="sidebar-icon">🕐</span> Jadwal Buka</a>
       </div>
 
       <!-- SIDEBAR: Filter Harga -->
       <div class="sidebar-section"
         style="padding: 12px 16px 16px; border-top: 1px solid rgba(45,106,79,.08); margin-top: 8px;">
-        <span class="sidebar-label"> Range Harga</span>
+        <span class="sidebar-label">💰 Range Harga</span>
         <div style="display:flex; flex-direction:column; gap:6px;">
           <button class="harga-preset-btn" style="width:100%;border-radius:10px;text-align:left;padding:7px 12px;"
             onclick="filterByHarga(0, 10000, this)">Rp 0 – 10K</button>
@@ -592,10 +586,10 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               <button class="search-btn" onclick="doSearch()">Cari</button>
             </div>
             <div class="search-tags">
-              <span onclick="quickSearch('Batagor')">Batagor</span>
-              <span onclick="quickSearch('Mie Ayam')"> Mie Ayam</span>
-              <span onclick="quickSearch('Surabi')"> Surabi</span>
-              <span onclick="quickSearch('Es Kelapa')"> Es Kelapa</span>
+              <span onclick="quickSearch('Batagor')">🍢 Batagor</span>
+              <span onclick="quickSearch('Mie Ayam')">🍜 Mie Ayam</span>
+              <span onclick="quickSearch('Surabi')">🥞 Surabi</span>
+              <span onclick="quickSearch('Es Kelapa')">🥥 Es Kelapa</span>
             </div>
           </div>
         </div>
@@ -618,7 +612,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
         <div class="flavor-grid">
           <?php
-          $emojiRasa = ['Asin'=>'','Gurih'=>'','Manis'=>'','Pedas'=>'','Asam'=>''];
+          $emojiRasa = ['Asin'=>'🧂','Gurih'=>'🍗','Manis'=>'🍯','Pedas'=>'🌶️','Asam'=>'🍋'];
           mysqli_data_seek($resultRasa, 0);
           while ($rasa = mysqli_fetch_assoc($resultRasa)):
               $namaRasa = htmlspecialchars($rasa['jenis_rasa']);
@@ -721,11 +715,11 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
 
   <script>
   const emojiMap = {
-    'Asin': '',
-    'Gurih': '',
-    'Manis': '',
-    'Pedas': '',
-    'Asam': ''
+    'Asin': '🧂',
+    'Gurih': '🍗',
+    'Manis': '🍯',
+    'Pedas': '🌶️',
+    'Asam': '🍋'
   };
   const kategoriEmojiMap = {
     'Makanan': '🍜',

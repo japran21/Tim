@@ -225,10 +225,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-submit">Update</button>
+          <button type="button" class="btn-submit" onclick="showKonfirmasi()">Update</button>
           <a href="mitra.php" class="btn-cancel">Batal</a>
         </div>
       </form>
+
+      <!-- POPUP KONFIRMASI -->
+      <div id="overlay-konfirmasi"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;">
+        <div
+          style="background:#1a1a2e;color:#fff;border-radius:16px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <span style="font-size:1.3rem;">⚠️</span>
+            <strong style="font-size:1rem;letter-spacing:.05em;text-transform:uppercase;">KONFIRMASI PERUBAHAN
+              MITRA</strong>
+          </div>
+          <div style="font-size:.9rem;line-height:1.8;color:#d1d5db;margin-bottom:20px;">
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Nama Mitra</span>: <span
+                id="konfirm-nama" style="color:#fff;font-weight:600;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">ID Mitra</span>: <span
+                style="color:#fff;">#<?= $id_mitra ?></span></div>
+          </div>
+          <p style="font-size:.85rem;color:#fbbf24;margin-bottom:24px;">Data mitra ini akan <strong>DIPERBARUI</strong>.
+            Perubahan akan mempengaruhi semua UMKM yang terhubung. Lanjutkan?</p>
+          <div style="display:flex;gap:12px;justify-content:flex-end;">
+            <button onclick="submitForm()"
+              style="background:#2e6b4f;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:.95rem;">Oke</button>
+            <button onclick="tutupKonfirmasi()"
+              style="background:#374151;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:.95rem;">Batal</button>
+          </div>
+        </div>
+      </div>
 
       <div class="info-card">
         ℹ️ <strong>Informasi:</strong> Perubahan nama mitra platform akan mempengaruhi data UMKM yang terhubung dengan
@@ -246,6 +273,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="footer-copy">© 2026 Street Food Ciwaruga · Mendukung Usaha Lokal</p>
     </div>
   </footer>
+
+  <script>
+  function showKonfirmasi() {
+    const nama = document.getElementById('nama_mitra').value.trim();
+    if (!nama) {
+      alert('Nama mitra platform wajib diisi!');
+      return;
+    }
+    document.getElementById('konfirm-nama').textContent = nama;
+    document.getElementById('overlay-konfirmasi').style.display = 'flex';
+  }
+
+  function tutupKonfirmasi() {
+    document.getElementById('overlay-konfirmasi').style.display = 'none';
+  }
+
+  function submitForm() {
+    document.querySelector('form').submit();
+  }
+
+  document.getElementById('overlay-konfirmasi').addEventListener('click', function(e) {
+    if (e.target === this) tutupKonfirmasi();
+  });
+  </script>
 </body>
 
 </html>

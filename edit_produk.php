@@ -27,13 +27,13 @@ if (mysqli_num_rows($result) == 0) {
 
 $produk = mysqli_fetch_assoc($result);
 
-// Ambil data UMKM
+// Ambil data UMKM untuk dropdown
 $query_umkm = "SELECT id_umkm, nama_umkm FROM umkm ORDER BY nama_umkm";
 $result_umkm = mysqli_query($koneksi, $query_umkm);
 
 $error = '';
+$error_type = 'normal';
 
-/* ================== POST (SUDAH DIGABUNG + ROLLBACK) ================== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_umkm = (int)$_POST['id_umkm'];
     $nama_produk = trim($_POST['nama_produk']);
@@ -46,51 +46,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($nama_produk)) $errors[] = 'Nama produk tidak boleh kosong';
     if ($harga < 0) $errors[] = 'Harga tidak boleh minus';
     if (empty($kategori_produk)) $errors[] = 'Kategori produk tidak boleh kosong';
+
+    // Upload foto produk baru (opsional)
+    $foto_produk_baru = $produk['foto_produk'] ?? NULL;
+    if (isset($_FILES['foto_produk']) && $_FILES['foto_produk']['error'] == 0) {
+        $target_dir = "FOTO_PRODUK/";
+        if (!file_exists($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+        // Hapus foto lama jika ada
+        if (!empty($produk['foto_produk']) && file_exists($produk['foto_produk'])) {
+            unlink($produk['foto_produk']);
+        }
+        $file_extension = pathinfo($_FILES['foto_produk']['name'], PATHINFO_EXTENSION);
+        $new_filename = time() . '_' . preg_replace('/[^a-zA-Z0-9]/', '_', $nama_produk) . '.' . $file_extension;
+        $target_file = $target_dir . $new_filename;
+        if (move_uploaded_file($_FILES['foto_produk']['tmp_name'], $target_file)) {
+            $foto_produk_baru = $target_file;
+        }
+    }
     
     if (empty($errors)) {
-
-        mysqli_begin_transaction($koneksi);
-
+        $asal = $asal_daerah ? "'" . mysqli_real_escape_string($koneksi, $asal_daerah) . "'" : "NULL";
+        $foto_sql = $foto_produk_baru ? "'" . mysqli_real_escape_string($koneksi, $foto_produk_baru) . "'" : "NULL";
+        $update = "UPDATE produk 
+                   SET id_umkm = $id_umkm, 
+                       nama_produk = '$nama_produk', 
+                       harga = $harga, 
+                       kategori_produk = '$kategori_produk', 
+                       asal_daerah = $asal,
+                       foto_produk = $foto_sql
+                   WHERE id_produk = $id_produk";
+        
         try {
-            // 🔥 Ambil harga lama
-            $q = mysqli_query($koneksi, "SELECT harga FROM produk WHERE id_produk = $id_produk");
-            $old = mysqli_fetch_assoc($q);
-            $harga_lama = $old['harga'];
-
-            // 🔥 Validasi kenaikan max 50%
-            if ($harga > ($harga_lama * 1.5)) {
-                throw new Exception("Harga tidak boleh naik lebih dari 50%");
+            if (mysqli_query($koneksi, $update)) {
+                $_SESSION['message'] = 'Produk "' . htmlspecialchars($nama_produk) . '" berhasil diupdate!';
+                $_SESSION['message_type'] = 'success';
+                header('Location: produk.php');
+                exit;
+            } else {
+                $error = mysqli_error($koneksi);
+                $error_type = 'rollback';
             }
-
-            $asal = $asal_daerah ? "'" . mysqli_real_escape_string($koneksi, $asal_daerah) . "'" : "NULL";
-
-            // 🔥 Update
-            $update = "UPDATE produk 
-                       SET id_umkm = $id_umkm, 
-                           nama_produk = '$nama_produk', 
-                           harga = $harga, 
-                           kategori_produk = '$kategori_produk', 
-                           asal_daerah = $asal 
-                       WHERE id_produk = $id_produk";
-
-            mysqli_query($koneksi, $update);
-
-            // ✅ Commit
-            mysqli_commit($koneksi);
-
-            $_SESSION['message'] = 'Produk "' . htmlspecialchars($nama_produk) . '" berhasil diupdate!';
-            $_SESSION['message_type'] = 'success';
-            header('Location: produk.php');
-            exit;
-
-        } catch (Exception $e) {
-
-            // ❌ Rollback
-            mysqli_rollback($koneksi);
-
-            $error = "Update dibatalkan: " . $e->getMessage();
+        } catch (mysqli_sql_exception $e) {
+            $error = $e->getMessage();
+            $error_type = 'rollback';
         }
-
     } else {
         $error = implode('<br>', $errors);
     }
@@ -264,13 +265,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1 class="form-title">✏️ Edit Produk</h1>
       <p class="form-subtitle">Ubah informasi produk: <?= htmlspecialchars($produk['nama_produk']) ?></p>
 
-      <?php if ($error): ?>
+      <?php if ($error && $error_type === 'rollback'): ?>
+      <div
+        style="background:#1a1a2e;color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:24px;border-left:5px solid #ef4444;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.3rem;">🔴</span>
+          <strong style="font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;">GAGAL — PERUBAHAN DIBATALKAN
+            (ROLLBACK)</strong>
+        </div>
+        <div style="font-size:.88rem;color:#fca5a5;margin-bottom:10px;">
+          <?= htmlspecialchars($error) ?>
+        </div>
+        <div style="font-size:.8rem;color:#9ca3af;">Tidak ada perubahan yang tersimpan. Silakan periksa kembali data dan
+          coba lagi.</div>
+      </div>
+      <?php elseif ($error): ?>
       <div class="error-message">
         ⚠️ <?= $error ?>
       </div>
       <?php endif; ?>
 
-      <form method="POST" action="">
+      <form method="POST" action="" enctype="multipart/form-data">
         <div class="form-group">
           <label for="id_umkm">Nama UMKM *</label>
           <select id="id_umkm" name="id_umkm" required>
@@ -317,11 +332,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             value="<?= htmlspecialchars($produk['asal_daerah'] ?? '') ?>" placeholder="Contoh: Bandung, Jawa Barat">
         </div>
 
+        <div class="form-group">
+          <label for="foto_produk">Foto Produk</label>
+          <?php if (!empty($produk['foto_produk']) && file_exists($produk['foto_produk'])): ?>
+          <div style="margin-bottom:10px;">
+            <img src="<?= htmlspecialchars($produk['foto_produk']) ?>" alt="Foto Produk"
+              style="width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #e2e8f0;">
+            <div style="font-size:.8rem;color:#6b7280;margin-top:4px;">Foto saat ini</div>
+          </div>
+          <?php endif; ?>
+          <input type="file" id="foto_produk" name="foto_produk" accept="image/*">
+          <small style="color:#6b7280;">Kosongkan jika tidak ingin mengganti foto. Format: JPG, PNG, GIF, WEBP.</small>
+        </div>
+
         <div class="form-actions">
-          <button type="submit" class="btn-submit">Update Produk</button>
+          <button type="button" class="btn-submit" onclick="showKonfirmasi()">Update Produk</button>
           <a href="produk.php" class="btn-cancel">Batal</a>
         </div>
       </form>
+
+      <!-- POPUP KONFIRMASI -->
+      <div id="overlay-konfirmasi"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;">
+        <div
+          style="background:#1a1a2e;color:#fff;border-radius:16px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <span style="font-size:1.3rem;">⚠️</span>
+            <strong style="font-size:1rem;letter-spacing:.05em;text-transform:uppercase;">KONFIRMASI PERUBAHAN
+              PRODUK</strong>
+          </div>
+          <div style="font-size:.9rem;line-height:1.8;color:#d1d5db;margin-bottom:20px;">
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Nama Produk</span>: <span
+                id="konfirm-nama" style="color:#fff;font-weight:600;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">UMKM</span>: <span id="konfirm-umkm"
+                style="color:#fff;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Harga</span>: <span id="konfirm-harga"
+                style="color:#fff;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Kategori</span>: <span
+                id="konfirm-kategori" style="color:#fff;"></span></div>
+          </div>
+          <p style="font-size:.85rem;color:#fbbf24;margin-bottom:24px;">Data produk ini akan
+            <strong>DIPERBARUI</strong>. Lanjutkan?</p>
+          <div style="display:flex;gap:12px;justify-content:flex-end;">
+            <button onclick="submitForm()"
+              style="background:#2e6b4f;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:.95rem;">Oke</button>
+            <button onclick="tutupKonfirmasi()"
+              style="background:#374151;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:.95rem;">Batal</button>
+          </div>
+        </div>
+      </div>
 
       <div class="info-card">
         <span>🔗 Atur rasa untuk produk ini:</span>
@@ -339,6 +398,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <p class="footer-copy">© 2026 Street Food Ciwaruga · Mendukung Usaha Lokal</p>
     </div>
   </footer>
+
+  <script>
+  function showKonfirmasi() {
+    const nama = document.getElementById('nama_produk').value.trim();
+    const umkmSel = document.getElementById('id_umkm');
+    const umkm = umkmSel.options[umkmSel.selectedIndex]?.text || '-';
+    const harga = document.getElementById('harga').value;
+    const kategori = document.getElementById('kategori_produk').value;
+
+    if (!nama || !harga || !kategori) {
+      alert('Nama produk, harga, dan kategori wajib diisi!');
+      return;
+    }
+
+    document.getElementById('konfirm-nama').textContent = nama;
+    document.getElementById('konfirm-umkm').textContent = umkm;
+    document.getElementById('konfirm-harga').textContent = 'Rp ' + parseInt(harga).toLocaleString('id-ID');
+    document.getElementById('konfirm-kategori').textContent = kategori;
+
+    document.getElementById('overlay-konfirmasi').style.display = 'flex';
+  }
+
+  function tutupKonfirmasi() {
+    document.getElementById('overlay-konfirmasi').style.display = 'none';
+  }
+
+  function submitForm() {
+    document.querySelector('form').submit();
+  }
+
+  document.getElementById('overlay-konfirmasi').addEventListener('click', function(e) {
+    if (e.target === this) tutupKonfirmasi();
+  });
+  </script>
 </body>
 
 </html>

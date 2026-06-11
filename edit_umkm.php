@@ -24,6 +24,7 @@ if (mysqli_num_rows($result) == 0) {
 
 $umkm = mysqli_fetch_assoc($result);
 $error = '';
+$error_type = 'normal';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_umkm = trim($_POST['nama_umkm']);
@@ -69,73 +70,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($lokasi)) $errors[] = 'Lokasi tidak boleh kosong';
     
     if (empty($errors)) {
-        // Simpan data lama untuk keperluan rollback file foto
-        $foto_lama = $umkm['foto'];
-        $foto_baru_diupload = ($foto !== $foto_lama); // true jika ada foto baru
-
-        // ── TRANSACTION: BEGIN ──────────────────────────────────────────────
+        $foto_sql = $foto ? "'$foto'" : "NULL";
+        $kontak_sql = $nomor_kontak ? "'$nomor_kontak'" : "NULL";
+        $no_sertifikat_sql = $no_sertifikat ? "'$no_sertifikat'" : "NULL";
+        $lembaga_sql = $lembaga_penerbit ? "'$lembaga_penerbit'" : "NULL";
+        $tgl_sql = $tanggal_terbit ? "'$tanggal_terbit'" : "NULL";
+        
+        $query_update = "UPDATE umkm SET 
+            nama_umkm = '$nama_umkm', 
+            lokasi = '$lokasi', 
+            foto = $foto_sql, 
+            nomor_kontak = $kontak_sql, 
+            status_halal = '$status_halal', 
+            no_sertifikat = $no_sertifikat_sql, 
+            lembaga_penerbit = $lembaga_sql, 
+            tanggal_terbit = $tgl_sql 
+            WHERE id_umkm = $id_umkm";
+            
         try {
-            if ($pdo === null) {
-                throw new Exception('Koneksi PDO tidak tersedia.');
+            if (mysqli_query($koneksi, $query_update)) {
+                $_SESSION['message'] = 'Data UMKM "' . htmlspecialchars($nama_umkm) . '" berhasil diperbarui!';
+                $_SESSION['message_type'] = 'success';
+                header('Location: umkm.php');
+                exit;
+            } else {
+                $error = mysqli_error($koneksi);
+                $error_type = 'rollback';
             }
-
-            $pdo->beginTransaction();
-
-            $stmt = $koneksi->prepare("UPDATE umkm SET 
-                nama_umkm       = :nama_umkm,
-                lokasi          = :lokasi,
-                foto            = :foto,
-                nomor_kontak    = :nomor_kontak,
-                status_halal    = :status_halal,
-                no_sertifikat   = :no_sertifikat,
-                lembaga_penerbit= :lembaga_penerbit,
-                tanggal_terbit  = :tanggal_terbit
-                WHERE id_umkm   = :id_umkm");
-
-            $stmt->bind_param([
-                ':nama_umkm'        => $nama_umkm,
-                ':lokasi'           => $lokasi,
-                ':foto'             => $foto ?: null,
-                ':nomor_kontak'     => $nomor_kontak,
-                ':status_halal'     => $status_halal,
-                ':no_sertifikat'    => $no_sertifikat,
-                ':lembaga_penerbit' => $lembaga_penerbit,
-                ':tanggal_terbit'   => $tanggal_terbit,
-                ':id_umkm'          => $id_umkm,
-            ]);
-            $stmt->execute();
-
-            // Pastikan tepat 1 baris yang berubah
-            if ($stmt->rowCount() < 0) {
-                throw new Exception('Tidak ada baris yang diperbarui di database.');
-            }
-
-            // ── COMMIT ──────────────────────────────────────────────────────
-            $koneksi->commit();
-
-            $_SESSION['message'] = 'Data UMKM "' . htmlspecialchars($nama_umkm) . '" berhasil diperbarui!';
-            $_SESSION['message_type'] = 'success';
-            header('Location: umkm.php');
-            exit;
-
-        } catch (Exception $e) {
-            // ── ROLLBACK ────────────────────────────────────────────────────
-           $koneksi->rollback();
-
-            // Jika foto baru sudah terlanjur diupload, hapus agar tidak jadi sampah
-            if ($foto_baru_diupload && $foto && file_exists($foto)) {
-                unlink($foto);
-            }
-
-            // Kembalikan referensi foto ke foto lama
-            $foto = $foto_lama;
-
-            error_log('edit_umkm rollback: ' . $e->getMessage());
-            $error = 'Gagal memperbarui data. Perubahan telah dibatalkan (rollback). '
-                   . 'Silakan coba lagi atau hubungi administrator.';
+        } catch (mysqli_sql_exception $e) {
+            $error = $e->getMessage();
+            $error_type = 'rollback';
         }
-        // ── END TRANSACTION ─────────────────────────────────────────────────
-
     } else {
         $error = implode('<br>', $errors);
     }
@@ -319,7 +284,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <h1 class="form-title">✏️ Edit Data UMKM</h1>
       <p class="form-subtitle">Ubah informasi data UMKM makanan/minuman di Ciwaruga</p>
 
-      <?php if ($error): ?>
+      <?php if ($error && $error_type === 'rollback'): ?>
+      <div
+        style="background:#1a1a2e;color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:24px;border-left:5px solid #ef4444;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <span style="font-size:1.3rem;">🔴</span>
+          <strong style="font-size:.95rem;letter-spacing:.05em;text-transform:uppercase;">GAGAL — PERUBAHAN DIBATALKAN
+            (ROLLBACK)</strong>
+        </div>
+        <div style="font-size:.88rem;color:#fca5a5;margin-bottom:10px;">
+          <?= htmlspecialchars($error) ?>
+        </div>
+        <div style="font-size:.8rem;color:#9ca3af;">Tidak ada perubahan yang tersimpan. Silakan periksa kembali data dan
+          coba lagi.</div>
+      </div>
+      <?php elseif ($error): ?>
       <div class="error-message">
         ⚠️ <?= $error ?>
       </div>
@@ -388,10 +367,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="form-actions">
-          <button type="submit" class="btn-submit">Simpan Perubahan</button>
+          <button type="button" class="btn-submit" onclick="showKonfirmasi()">Simpan Perubahan</button>
           <a href="umkm.php" class="btn-cancel">Batal</a>
         </div>
       </form>
+
+      <!-- POPUP KONFIRMASI -->
+      <div id="overlay-konfirmasi"
+        style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;">
+        <div
+          style="background:#1a1a2e;color:#fff;border-radius:16px;padding:32px 36px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.4);">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
+            <span style="font-size:1.3rem;">⚠️</span>
+            <strong style="font-size:1rem;letter-spacing:.05em;text-transform:uppercase;">KONFIRMASI PERUBAHAN
+              UMKM</strong>
+          </div>
+          <div style="font-size:.9rem;line-height:1.8;color:#d1d5db;margin-bottom:20px;">
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Nama UMKM</span>: <span id="konfirm-nama"
+                style="color:#fff;font-weight:600;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Lokasi</span>: <span id="konfirm-lokasi"
+                style="color:#fff;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Kontak</span>: <span id="konfirm-kontak"
+                style="color:#fff;"></span></div>
+            <div><span style="color:#9ca3af;width:110px;display:inline-block;">Status Halal</span>: <span
+                id="konfirm-halal" style="color:#fff;"></span></div>
+          </div>
+          <p style="font-size:.85rem;color:#fbbf24;margin-bottom:24px;">Data UMKM ini akan <strong>DIPERBARUI</strong>.
+            Lanjutkan?</p>
+          <div style="display:flex;gap:12px;justify-content:flex-end;">
+            <button onclick="submitForm()"
+              style="background:#2e6b4f;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:.95rem;">Oke</button>
+            <button onclick="tutupKonfirmasi()"
+              style="background:#374151;color:#fff;border:none;padding:10px 28px;border-radius:40px;font-weight:600;cursor:pointer;font-size:.95rem;">Batal</button>
+          </div>
+        </div>
+      </div>
 
       <div class="info-card">
         💡 <strong>Tips:</strong>
@@ -429,6 +439,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   statusSelect.addEventListener('change', toggleSertifikatFields);
   toggleSertifikatFields();
+
+  function showKonfirmasi() {
+    const nama = document.getElementById('nama_umkm').value.trim();
+    const lokasi = document.getElementById('lokasi').value.trim();
+    const kontak = document.getElementById('nomor_kontak').value.trim() || '-';
+    const halal = document.getElementById('status_halal').value;
+
+    if (!nama || !lokasi) {
+      alert('Nama UMKM dan Lokasi wajib diisi!');
+      return;
+    }
+
+    document.getElementById('konfirm-nama').textContent = nama;
+    document.getElementById('konfirm-lokasi').textContent = lokasi.length > 40 ? lokasi.substring(0, 40) + '…' : lokasi;
+    document.getElementById('konfirm-kontak').textContent = kontak;
+    document.getElementById('konfirm-halal').textContent = halal;
+
+    const overlay = document.getElementById('overlay-konfirmasi');
+    overlay.style.display = 'flex';
+  }
+
+  function tutupKonfirmasi() {
+    document.getElementById('overlay-konfirmasi').style.display = 'none';
+  }
+
+  function submitForm() {
+    document.querySelector('form').submit();
+  }
+
+  // Tutup popup kalau klik di luar box
+  document.getElementById('overlay-konfirmasi').addEventListener('click', function(e) {
+    if (e.target === this) tutupKonfirmasi();
+  });
   </script>
 </body>
 
