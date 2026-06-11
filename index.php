@@ -517,19 +517,19 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     <aside class="sidebar">
       <div class="sidebar-section">
         <span class="sidebar-label">Menu Kelola</span>
-        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">🏪</span> Kelola UMKM</a>
-        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">🍽️</span> Kelola Produk</a>
-        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">🌶️</span> Kelola Rasa</a>
-        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">💳</span> Kelola Pembayaran</a>
-        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">🤝</span> Kelola Mitra</a>
-        <a href="jadwal_umkm.php" class="sidebar-link"><span class="sidebar-icon">🕐</span> Jadwal Buka</a>
-        <a href="detail_pembayaran.php" class="sidebar-link"><span class="sidebar-icon">💰</span> Detail Pembayaran</a>
+        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola UMKM</a>
+        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Produk</a>
+        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Rasa</a>
+        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Pembayaran</a>
+        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">-</span> Kelola Mitra</a>
+        <a href="jadwal_umkm.php" class="sidebar-link"><span class="sidebar-icon">-</span> Jadwal Buka</a>
+        <a href="detail_pembayaran.php" class="sidebar-link"><span class="sidebar-icon">-</span> Detail Pembayaran</a>
       </div>
 
       <!-- Filter Harga di Sidebar (dari kode 1) -->
       <div class="sidebar-section"
         style="padding: 12px 16px 16px; border-top: 1px solid rgba(45,106,79,.08); margin-top: 8px;">
-        <span class="sidebar-label">💰 Range Harga</span>
+        <span class="sidebar-label">Range Harga</span>
         <div style="display:flex; flex-direction:column; gap:6px;">
           <button class="harga-preset-btn" onclick="filterByHarga(0, 10000, this)">Rp 0 – 10K</button>
           <button class="harga-preset-btn" onclick="filterByHarga(0, 20000, this)">Rp 0 – 20K</button>
@@ -566,10 +566,10 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               <button class="search-btn" onclick="doSearch()">Cari</button>
             </div>
             <div class="search-tags">
-              <span onclick="quickSearch('Batagor')">🍢 Batagor</span>
-              <span onclick="quickSearch('Mie Ayam')">🍜 Mie Ayam</span>
-              <span onclick="quickSearch('Surabi')">🥞 Surabi</span>
-              <span onclick="quickSearch('Es Kelapa')">🥥 Es Kelapa</span>
+              <span onclick="quickSearch('Batagor')">Batagor</span>
+              <span onclick="quickSearch('Mie Ayam')"> Mie Ayam</span>
+              <span onclick="quickSearch('Surabi')"> Surabi</span>
+              <span onclick="quickSearch('Es Kelapa')"> Es Kelapa</span>
             </div>
           </div>
         </div>
@@ -592,11 +592,11 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
         </div>
         <div class="flavor-grid">
           <?php
-          $emojiRasa = ['Asin'=>'🧂','Gurih'=>'🍗','Manis'=>'🍯','Pedas'=>'🌶️','Asam'=>'🍋'];
+          $emojiRasa = ['Asin'=>'','Gurih'=>'','Manis'=>'','Pedas'=>'','Asam'=>''];
           mysqli_data_seek($resultRasa, 0);
           while ($rasa = mysqli_fetch_assoc($resultRasa)):
               $namaRasa = htmlspecialchars($rasa['jenis_rasa']);
-              $emoji    = $emojiRasa[$namaRasa] ?? '🍽️';
+              $emoji    = $emojiRasa[$namaRasa] ?? '';
               $total    = $rasaCounts[$namaRasa] ?? 0;
           ?>
           <div class="flavor-card" data-rasa="<?= $namaRasa ?>" onclick="filterByRasa('<?= $namaRasa ?>', this)">
@@ -764,7 +764,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     clearAllActive();
     activeKategori = namaKat;
     el.classList.add('active');
-    showResults((kategoriEmojiMap[namaKat] || '📂') + ' Kategori <strong>' + escHtml(namaKat) + '</strong>');
+    showResults((kategoriEmojiMap[namaKat] || '') + ' Kategori <strong>' + escHtml(namaKat) + '</strong>');
     fetchAndRender('get_produk.php?kategori=' + encodeURIComponent(namaKat), namaKat, 'kategori');
   }
 
@@ -814,7 +814,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
           return;
         }
         const emoji = type === 'rasa' ? (emojiMap[label] || '🍽️') : type === 'kategori' ? (kategoriEmojiMap[label] ||
-          '📂') : type === 'asal' ? '📍' : '🍽️';
+          '') : type === 'asal' ? '📍' : '';
         grid.innerHTML = data.map(p => {
           const fotoHtml = p.foto && p.foto !== 'NULL' ?
             `<img src="FOTO_UMKM/${escHtml(p.foto)}" alt="${escHtml(p.nama_umkm)}" class="product-card-img" onerror="this.parentElement.innerHTML='<span class=\\'product-card-emoji\\'>${emoji}</span>'">` :
@@ -826,7 +826,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
               <div class="product-name">${escHtml(p.nama_produk)}</div>
               <div class="product-umkm">🏪 ${escHtml(p.nama_umkm)}</div>
               <div class="product-tags">
-                ${p.kategori_produk?`<span class="product-tag" style="background:#e0e7ff;color:#3730a3;">📂 ${escHtml(p.kategori_produk)}</span>`:''}
+                ${p.kategori_produk?`<span class="product-tag" style="background:#e0e7ff;color:#3730a3;"> ${escHtml(p.kategori_produk)}</span>`:''}
                 ${p.daftar_rasa?`<span class="product-tag" style="background:#f3f4f6;color:#6b7280;">${escHtml(p.daftar_rasa)}</span>`:''}
                 ${p.asal_daerah && p.asal_daerah !== 'NULL'?`<span class="product-tag tag-asal">📍 ${escHtml(p.asal_daerah)}</span>`:''}
               </div>

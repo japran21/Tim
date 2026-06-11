@@ -386,10 +386,10 @@ $colorRasa = [
     <div class="card">
       <!-- Informasi Produk -->
       <div class="product-info">
-        <div class="product-name">🍽️ <?= htmlspecialchars($produk['nama_produk']) ?></div>
-        <div class="product-umkm">🏪 <?= htmlspecialchars($produk['nama_umkm']) ?></div>
-        <div class="product-price">💰 Rp <?= number_format($produk['harga'], 0, ',', '.') ?></div>
-        <div class="product-umkm">📂 Kategori: <?= htmlspecialchars($produk['kategori_produk']) ?></div>
+        <div class="product-name"> <?= htmlspecialchars($produk['nama_produk']) ?></div>
+        <div class="product-umkm"> <?= htmlspecialchars($produk['nama_umkm']) ?></div>
+        <div class="product-price"> Rp <?= number_format($produk['harga'], 0, ',', '.') ?></div>
+        <div class="product-umkm"> Kategori: <?= htmlspecialchars($produk['kategori_produk']) ?></div>
         <?php if ($produk['asal_daerah']): ?>
         <div class="product-umkm">📍 Asal: <?= htmlspecialchars($produk['asal_daerah']) ?></div>
         <?php endif; ?>

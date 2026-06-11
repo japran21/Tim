@@ -502,11 +502,11 @@ $totalUMKM = mysqli_fetch_assoc(mysqli_query($koneksi, "SELECT COUNT(*) as total
     <aside class="sidebar">
       <div class="sidebar-section">
         <span class="sidebar-label">Menu Kelola</span>
-        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon">🏪</span> Kelola UMKM</a>
-        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon">🍽️</span> Kelola Produk</a>
-        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon">🌶️</span> Kelola Rasa</a>
-        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon">💳</span> Kelola Pembayaran</a>
-        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon">🤝</span> Kelola Mitra</a>
+        <a href="umkm.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola UMKM</a>
+        <a href="produk.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Produk</a>
+        <a href="kategori_rasa.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Rasa</a>
+        <a href="bayar.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Pembayaran</a>
+        <a href="mitra.php" class="sidebar-link"><span class="sidebar-icon"></span> Kelola Mitra</a>
         <a href="jadwal_umkm.php" class="sidebar-link active"><span class="sidebar-icon">🕐</span> Jadwal Buka</a>
       </div>
     </aside>
