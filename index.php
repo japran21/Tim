@@ -128,7 +128,11 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     align-items: center;
   }
 
+<<<<<<< HEAD
   .main-content>* {
+=======
+  .main-content > * {
+>>>>>>> 25988e3e03b359cd2aac85784b3cf389b719de42
     width: 100%;
   }
 
@@ -238,6 +242,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     width: 100%;
     max-width: 280px;
     min-width: 0;
+<<<<<<< HEAD
   }
 
   .product-card-top--foto {
@@ -264,6 +269,8 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     justify-content: center;
     width: 100%;
     height: 100%;
+=======
+>>>>>>> 25988e3e03b359cd2aac85784b3cf389b719de42
   }
 
   /* ===== KATEGORI SECTION ===== */
