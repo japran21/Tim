@@ -71,11 +71,11 @@ while ($row = mysqli_fetch_assoc($resultMetode)) {
 
 // Konfigurasi icon & warna untuk metode pembayaran (dari kode 2)
 $metodeConfig = [
-    'Cash'  => ['icon' => '💵', 'color' => '#16a34a', 'bg' => '#dcfce7', 'desc' => 'Pembayaran tunai langsung'],
-    'QRIS'  => ['icon' => '📱', 'color' => '#7c3aed', 'bg' => '#ede9fe', 'desc' => 'Scan QR Code universal'],
-    'Dana'  => ['icon' => '💙', 'color' => '#2563eb', 'bg' => '#dbeafe', 'desc' => 'Dompet digital Dana'],
-    'OVO'   => ['icon' => '💜', 'color' => '#7c3aed', 'bg' => '#f3e8ff', 'desc' => 'Dompet digital OVO'],
-    'Gopay' => ['icon' => '🟢', 'color' => '#00b14f', 'bg' => '#d1fae5', 'desc' => 'Dompet digital Gopay'],
+    'Cash'  => ['icon' => '', 'color' => '#16a34a', 'bg' => '#dcfce7', 'desc' => 'Pembayaran tunai langsung'],
+    'QRIS'  => ['icon' => '', 'color' => '#7c3aed', 'bg' => '#ede9fe', 'desc' => 'Scan QR Code universal'],
+    'Dana'  => ['icon' => '', 'color' => '#2563eb', 'bg' => '#dbeafe', 'desc' => 'Dompet digital Dana'],
+    'OVO'   => ['icon' => '', 'color' => '#7c3aed', 'bg' => '#f3e8ff', 'desc' => 'Dompet digital OVO'],
+    'Gopay' => ['icon' => '', 'color' => '#00b14f', 'bg' => '#d1fae5', 'desc' => 'Dompet digital Gopay'],
     'Transfer Bank' => ['icon' => '🏦', 'color' => '#ef4444', 'bg' => '#fee2e2', 'desc' => 'Transfer antar bank'],
 ];
 
@@ -85,12 +85,12 @@ function getMetodeConfig($nama, $config) {
 
 // Emoji mapping untuk mitra
 $iconMitra = [
-    'GoFood' => '🟢',
-    'GrabFood' => '🟠',
-    'ShopeeFood' => '🟡',
-    'Gojek' => '🟢',
-    'Grab' => '🟠',
-    'Shopee' => '🟡',
+    'GoFood' => '',
+    'GrabFood' => '',
+    'ShopeeFood' => '',
+    'Gojek' => '',
+    'Grab' => '',
+    'Shopee' => '',
 ];
 $colorMitra = [
     'GoFood' => '#00b14f',

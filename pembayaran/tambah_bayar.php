@@ -210,14 +210,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="icon-tip">
             💡 <strong>Tips:</strong> Metode pembayaran yang umum digunakan:
             <div class="icon-grid">
-              <span class="icon-option">💵 Cash</span>
-              <span class="icon-option">📱 QRIS</span>
-              <span class="icon-option">💜 Dana</span>
-              <span class="icon-option">🟣 OVO</span>
-              <span class="icon-option">🟢 GoPay</span>
-              <span class="icon-option">🔵 LinkAja</span>
-              <span class="icon-option">💳 Kartu Kredit</span>
-              <span class="icon-option">🏦 Transfer Bank</span>
+              <span class="icon-option"> Cash</span>
+              <span class="icon-option"> QRIS</span>
+              <span class="icon-option"> Dana</span>
+              <span class="icon-option"> OVO</span>
+              <span class="icon-option"> GoPay</span>
+              <span class="icon-option"> LinkAja</span>
+              <span class="icon-option"> Kartu Kredit</span>
+              <span class="icon-option"> Transfer Bank</span>
             </div>
           </div>
         </div>

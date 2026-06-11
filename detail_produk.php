@@ -125,8 +125,8 @@ $emojiRasa = [
     'Asam'  => '🍋',
 ];
 $iconMitra = [
-    'GoFood' => '🟢', 'GrabFood' => '🟠', 'ShopeeFood' => '🟡',
-    'Gojek' => '🟢', 'Grab' => '🟠', 'Shopee' => '🟡',
+    'GoFood' => '', 'GrabFood' => '', 'ShopeeFood' => '',
+    'Gojek' => '', 'Grab' => '', 'Shopee' => '',
 ];
 $colorMitra = [
     'GoFood' => '#00b14f', 'GrabFood' => '#00b14f', 'ShopeeFood' => '#ee4d2d',

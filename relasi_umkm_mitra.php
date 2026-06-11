@@ -74,7 +74,7 @@ if ($selected_id > 0) {
     }
 }
 
-$iconMitra  = ['GoFood'=>'🟢','GrabFood'=>'🟠','ShopeeFood'=>'🟡','Gojek'=>'🟢','Grab'=>'🟠','Shopee'=>'🟡'];
+$iconMitra  = ['GoFood'=>'','GrabFood'=>'','ShopeeFood'=>'','Gojek'=>'','Grab'=>'','Shopee'=>''];
 $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d','Gojek'=>'#00b14f','Grab'=>'#00b14f','Shopee'=>'#ee4d2d'];
 ?>
 <!DOCTYPE html>

@@ -37,12 +37,12 @@ while ($row = mysqli_fetch_assoc($resultUmkm)) {
 
 // Icon dan warna
 $iconMitra = [
-    'GoFood' => '🟢',
-    'GrabFood' => '🟠',
-    'ShopeeFood' => '🟡',
-    'Gojek' => '🟢',
-    'Grab' => '🟠',
-    'Shopee' => '🟡',
+    'GoFood' => '',
+    'GrabFood' => '',
+    'ShopeeFood' => '',
+    'Gojek' => '',
+    'Grab' => '',
+    'Shopee' => '',
 ];
 $colorMitra = [
     'GoFood' => '#00b14f',
@@ -315,7 +315,8 @@ $color = $colorMitra[$mitra['nama_mitra']] ?? '#6b7280';
       <?php if (empty($umkmList)): ?>
       <div class="empty-state">
         <div style="font-size: 3rem; margin-bottom: 12px;">📭</div>
-        <p>Belum ada UMKM yang terhubung dengan platform <strong><?= htmlspecialchars($mitra['nama_mitra']) ?></strong>.</p>
+        <p>Belum ada UMKM yang terhubung dengan platform <strong><?= htmlspecialchars($mitra['nama_mitra']) ?></strong>.
+        </p>
       </div>
       <?php else: ?>
       <div class="umkm-grid">
@@ -348,7 +349,8 @@ $color = $colorMitra[$mitra['nama_mitra']] ?? '#6b7280';
             <div class="card-footer">
               <a href="detail_umkm.php?id=<?= $row['id_umkm'] ?>" class="btn btn-view">Profil</a>
               <?php if ($row['link_mitra']): ?>
-              <a href="<?= htmlspecialchars($row['link_mitra']) ?>" target="_blank" class="btn btn-order" style="background: <?= $color ?>;">Order Link</a>
+              <a href="<?= htmlspecialchars($row['link_mitra']) ?>" target="_blank" class="btn btn-order"
+                style="background: <?= $color ?>;">Order Link</a>
               <?php endif; ?>
             </div>
           </div>

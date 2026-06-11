@@ -261,12 +261,12 @@ $result_transaksi = mysqli_query($koneksi, $query_transaksi);
           <?php if (mysqli_num_rows($result) > 0): ?>
           <?php 
                         $iconMap = [
-                            'Cash' => '💵',
-                            'QRIS' => '📱',
-                            'Dana' => '💜',
-                            'OVO' => '🟣',
-                            'GoPay' => '🟢',
-                            'LinkAja' => '🔵'
+                            'Cash' => '',
+                            'QRIS' => '',
+                            'Dana' => '',
+                            'OVO' => '',
+                            'GoPay' => '',
+                            'LinkAja' => ''
                         ];
                         while ($row = mysqli_fetch_assoc($result)): 
                             $icon = $iconMap[$row['nama_metode']] ?? '';

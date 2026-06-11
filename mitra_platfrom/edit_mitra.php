@@ -200,9 +200,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <?php 
             $iconMap = [
-                'GoFood' => '🟢',
-                'GrabFood' => '🟠',
-                'ShopeeFood' => '🟡'
+                'GoFood' => '',
+                'GrabFood' => '',
+                'ShopeeFood' => ''
             ];
             $currentIcon = $iconMap[$mitra['nama_mitra']] ?? '📱';
             ?>

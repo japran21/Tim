@@ -308,12 +308,12 @@ $result = mysqli_query($koneksi, $query);
           <?php if ($total_mitra > 0): ?>
           <?php 
                         $iconMap = [
-                            'GoFood' => '🟢',
-                            'GrabFood' => '🟠',
-                            'ShopeeFood' => '🟡',
-                            'Gojek' => '🟢',
-                            'Grab' => '🟠',
-                            'Shopee' => '🟡'
+                            'GoFood' => '',
+                            'GrabFood' => '',
+                            'ShopeeFood' => '',
+                            'Gojek' => '',
+                            'Grab' => '',
+                            'Shopee' => ''
                         ];
                         $colorMap = [
                             'GoFood' => '#00b14f',

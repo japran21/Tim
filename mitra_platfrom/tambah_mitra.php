@@ -212,12 +212,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="icon-tip">
             💡 <strong>Mitra platform yang umum digunakan:</strong>
             <div class="mitra-grid">
-              <div class="mitra-option" onclick="setMitra('GoFood')">🟢 GoFood</div>
-              <div class="mitra-option" onclick="setMitra('GrabFood')">🟠 GrabFood</div>
-              <div class="mitra-option" onclick="setMitra('ShopeeFood')">🟡 ShopeeFood</div>
-              <div class="mitra-option" onclick="setMitra('Gojek')">🟢 Gojek</div>
-              <div class="mitra-option" onclick="setMitra('Grab')">🟠 Grab</div>
-              <div class="mitra-option" onclick="setMitra('Shopee')">🟡 Shopee</div>
+              <div class="mitra-option" onclick="setMitra('GoFood')"> GoFood</div>
+              <div class="mitra-option" onclick="setMitra('GrabFood')"> GrabFood</div>
+              <div class="mitra-option" onclick="setMitra('ShopeeFood')"> ShopeeFood</div>
+              <div class="mitra-option" onclick="setMitra('Gojek')"> Gojek</div>
+              <div class="mitra-option" onclick="setMitra('Grab')"> Grab</div>
+              <div class="mitra-option" onclick="setMitra('Shopee')"> Shopee</div>
             </div>
           </div>
         </div>

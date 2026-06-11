@@ -308,12 +308,12 @@ $result = mysqli_query($koneksi, $query);
           <?php if ($total_mitra > 0): ?>
           <?php 
                         $iconMap = [
-                            'GoFood' => '🟢',
-                            'GrabFood' => '🟠',
-                            'ShopeeFood' => '🟡',
-                            'Gojek' => '🟢',
-                            'Grab' => '🟠',
-                            'Shopee' => '🟡'
+                            'GoFood' => '',
+                            'GrabFood' => '',
+                            'ShopeeFood' => '',
+                            'Gojek' => '',
+                            'Grab' => '',
+                            'Shopee' => ''
                         ];
                         $colorMap = [
                             'GoFood' => '#00b14f',
@@ -375,7 +375,7 @@ $result = mysqli_query($koneksi, $query);
   function confirmDelete(id, nama) {
     if (confirm(
         `Apakah Anda yakin ingin menghapus mitra platform "${nama}"?\n\nData UMKM yang terhubung dengan mitra ini akan terpengaruh.`
-        )) {
+      )) {
       window.location.href = `hapus_mitra.php?id=${id}`;
     }
   }
