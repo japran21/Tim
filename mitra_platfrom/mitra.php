@@ -262,7 +262,7 @@ $result = mysqli_query($koneksi, $query);
     <div class="admin-header">
       <h1>🤝 Manajemen Mitra Platform</h1>
       <div style="display: flex; gap: 12px;">
-        <a href="relasi_mitra_umkm.php" class="btn-relasi">🔗 Kelola Relasi UMKM-Mitra</a>
+        <a href="relasi_mitra_umkm.php" class="btn-relasi">Kelola Relasi UMKM-Mitra</a>
         <a href="tambah_mitra.php" class="btn-tambah">+ Tambah Mitra Baru</a>
       </div>
     </div>
@@ -337,10 +337,10 @@ $result = mysqli_query($koneksi, $query);
             </td>
             <td>
               <div class="action-buttons">
-                <a href="edit_mitra.php?id=<?= $row['id_mitra'] ?>" class="btn-edit">✏️ Edit</a>
+                <a href="edit_mitra.php?id=<?= $row['id_mitra'] ?>" class="btn-edit">Edit</a>
                 <a href="detail_mitra.php?id=<?= $row['id_mitra'] ?>" class="btn-link">🔍 Detail</a>
                 <button onclick="confirmDelete(<?= $row['id_mitra'] ?>, '<?= htmlspecialchars($row['nama_mitra']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

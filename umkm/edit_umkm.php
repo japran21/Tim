@@ -313,7 +313,7 @@ $koneksi->commit();
 
   <div class="form-container">
     <div class="form-card">
-      <h1 class="form-title">✏️ Edit Data UMKM</h1>
+      <h1 class="form-title">Edit Data UMKM</h1>
       <p class="form-subtitle">Ubah informasi data UMKM makanan/minuman di Ciwaruga</p>
 
       <?php if ($error): ?>

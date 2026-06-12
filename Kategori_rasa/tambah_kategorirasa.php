@@ -178,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="jenis_rasa">Jenis Rasa *</label>
                     <input type="text" id="jenis_rasa" name="jenis_rasa" placeholder="Contoh: Pedas, Manis, Gurih, Asin, Asam" required value="<?= isset($_POST['jenis_rasa']) ? htmlspecialchars($_POST['jenis_rasa']) : '' ?>">
                     <div class="emoji-tip">
-                        💡 Tips: Rasa yang umum digunakan: 🧂 Asin, 🍗 Gurih, 🍯 Manis, 🌶️ Pedas, 🍋 Asam
+                        💡 Tips: Rasa yang umum digunakan: Asin, Gurih, 🍯 Manis, Pedas, Asam
                     </div>
                 </div>
 

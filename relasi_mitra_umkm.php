@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
     $_SESSION['message']      = 'Relasi mitra berhasil diupdate!';
     $_SESSION['message_type'] = 'success';
-    header("Location: relasi_umkm_mitra.php?id_umkm=$id_umkm");
+    header("Location: relasi_mitra_umkm.php?id_umkm=$id_umkm");
     exit;
 }
 
@@ -43,7 +43,7 @@ if (isset($_GET['hapus_mitra'], $_GET['id_mitra'], $_GET['id_umkm'])) {
     mysqli_query($koneksi, "DELETE FROM umkm_mitra WHERE id_umkm=$id_umkm AND id_mitra=$id_mitra");
     $_SESSION['message']      = 'Mitra berhasil dihapus dari UMKM.';
     $_SESSION['message_type'] = 'success';
-    header("Location: relasi_umkm_mitra.php?id_umkm=$id_umkm");
+    header("Location: relasi_mitra_umkm.php?id_umkm=$id_umkm");
     exit;
 }
 
@@ -431,7 +431,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
   </header>
 
   <div class="container">
-    <h1 class="page-title">🔗 Kelola Relasi UMKM–Mitra</h1>
+    <h1 class="page-title">Kelola Relasi UMKM–Mitra</h1>
 
     <?php if ($message): ?>
     <div class="message <?= $messageType ?>">
@@ -443,7 +443,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
     <!-- Pilih UMKM -->
     <div class="card">
       <label class="umkm-select-label">Pilih UMKM yang ingin dikelola relasinya:</label>
-      <select class="umkm-select" onchange="if(this.value) window.location='relasi_umkm_mitra.php?id_umkm='+this.value">
+      <select class="umkm-select" onchange="if(this.value) window.location='relasi_mitra_umkm.php?id_umkm='+this.value">
         <option value="">— Pilih UMKM —</option>
         <?php foreach ($all_umkm as $u): ?>
         <option value="<?= $u['id_umkm'] ?>" <?= $selected_id==$u['id_umkm'] ? 'selected' : '' ?>>
@@ -487,7 +487,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
           <?= $icon ?> <?= htmlspecialchars($m['nama_mitra']) ?>
           <?php if ($link): ?>
           <a href="<?= htmlspecialchars($link) ?>" target="_blank"
-            style="color:#fff;text-decoration:none;margin-left:4px;">🔗</a>
+            style="color:#fff;text-decoration:none;margin-left:4px;"></a>
           <?php endif; ?>
           <a href="?id_umkm=<?= $selected_id ?>&hapus_mitra=1&id_mitra=<?= $m['id_mitra'] ?>" class="remove"
             onclick="return confirm('Hapus <?= htmlspecialchars($m['nama_mitra']) ?> dari UMKM ini?')">✕</a>
@@ -525,7 +525,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
             </div>
             <div class="link-field" id="link_field_<?= $m['id_mitra'] ?>"
               style="display:<?= $checked ? 'flex' : 'none' ?>;">
-              <label>🔗 Link:</label>
+              <label>Link:</label>
               <input type="text" name="links[<?= $m['id_mitra'] ?>]" placeholder="https://gofood.link/a/xxxx"
                 value="<?= htmlspecialchars($currentLink) ?>">
             </div>
@@ -545,7 +545,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
 
     <?php else: ?>
     <div class="card">
-      <div class="placeholder-text">👆 Pilih UMKM di atas untuk mengelola relasi mitra platformnya.</div>
+      <div class="placeholder-text">Pilih UMKM di atas untuk mengelola relasi mitra platformnya.</div>
     </div>
     <?php endif; ?>
   </div>

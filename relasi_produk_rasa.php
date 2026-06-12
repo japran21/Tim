@@ -88,11 +88,11 @@ if (isset($_GET['hapus_rasa']) && isset($_GET['id_rasa'])) {
 
 // Emoji mapping per rasa
 $emojiRasa = [
-    'Asin' => '🧂',
-    'Gurih' => '🍗',
+    'Asin' => '',
+    'Gurih' => '',
     'Manis' => '',
-    'Pedas' => '🌶️',
-    'Asam' => '🍋',
+    'Pedas' => '',
+    'Asam' => '',
 ];
 
 // Warna untuk setiap rasa
@@ -413,13 +413,13 @@ $colorRasa = [
       <!-- Statistik -->
       <div class="stats-info">
         <span>Total rasa yang dipilih: <strong><?= count($rasaTerpilih) ?></strong></span>
-        <span>😋 Setiap produk bisa memiliki multiple rasa</span>
+        <span>Setiap produk bisa memiliki multiple rasa</span>
       </div>
 
       <!-- Rasa yang Sudah Dipilih -->
       <div>
         <div class="section-title">
-          <span>😋</span> Rasa yang Sudah Dipilih
+          <span></span> Rasa yang Sudah Dipilih
         </div>
         <div class="selected-rasa-list">
           <?php if (empty($rasaTerpilih)): ?>
@@ -432,7 +432,7 @@ $colorRasa = [
                         mysqli_data_seek($resultRasa, 0);
                         while ($rasa = mysqli_fetch_assoc($resultRasa)):
                             if (in_array($rasa['id_rasa'], $rasaTerpilih)):
-                                $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '😋';
+                                $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '';
                                 $color = $colorRasa[$rasa['jenis_rasa']] ?? '#6b7280';
                         ?>
           <div class="rasa-badge" style="background: <?= $color ?>;">
@@ -462,7 +462,7 @@ $colorRasa = [
                     mysqli_data_seek($resultRasa, 0);
                     while ($rasa = mysqli_fetch_assoc($resultRasa)): 
                         $isChecked = in_array($rasa['id_rasa'], $rasaTerpilih);
-                        $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '😋';
+                        $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '';
                         $color = $colorRasa[$rasa['jenis_rasa']] ?? '#6b7280';
                     ?>
           <label class="rasa-checkbox <?= $isChecked ? 'selected' : '' ?>"

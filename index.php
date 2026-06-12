@@ -822,7 +822,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
     clearAllActive();
     activeRasa = namaRasa;
     el.classList.add('active');
-    showResults((emojiMap[namaRasa] || '🍽️') + ' Rasa <strong>' + escHtml(namaRasa) + '</strong>');
+    showResults((emojiMap[namaRasa] || '') + ' Rasa <strong>' + escHtml(namaRasa) + '</strong>');
     fetchAndRender('get_produk.php?rasa=' + encodeURIComponent(namaRasa), namaRasa, 'rasa');
   }
 
@@ -883,7 +883,7 @@ while ($row = mysqli_fetch_assoc($asalResult)) {
             `<div class="empty-state"><div class="empty-emoji">😕</div><p>Tidak ada produk untuk <strong>${escHtml(label)}</strong>.</p></div>`;
           return;
         }
-        const emoji = type === 'rasa' ? (emojiMap[label] || '🍽️') : 
+        const emoji = type === 'rasa' ? (emojiMap[label] || '') : 
                       type === 'topping' ? '' :
                       type === 'kategori' ? (kategoriEmojiMap[label] || '') : 
                       type === 'asal' ? '📍' : '';

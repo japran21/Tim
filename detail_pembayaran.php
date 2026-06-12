@@ -73,7 +73,7 @@ $metodeConfig = [
 ];
 
 function getConfig($nama, $config) {
-    return $config[$nama] ?? ['icon' => '💳', 'color' => '#6b7280', 'bg' => '#f3f4f6', 'desc' => 'Metode pembayaran'];
+    return $config[$nama] ?? ['icon' => '', 'color' => '#6b7280', 'bg' => '#f3f4f6', 'desc' => 'Metode pembayaran'];
 }
 ?>
 <!DOCTYPE html>
@@ -161,7 +161,6 @@ function getConfig($nama, $config) {
     text-align: center;
   }
 
-  /* MAIN */
   .main-content {
     flex: 1;
     min-width: 0;
@@ -186,7 +185,6 @@ function getConfig($nama, $config) {
     margin: 0;
   }
 
-  /* SEARCH BAR */
   .search-card {
     background: #fff;
     border-radius: 20px;
@@ -253,7 +251,6 @@ function getConfig($nama, $config) {
     color: #374151;
   }
 
-  /* METODE CARD GRID */
   .metode-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -318,7 +315,6 @@ function getConfig($nama, $config) {
     margin-top: -4px;
   }
 
-  /* DIVIDER */
   .section-divider {
     display: flex;
     align-items: center;
@@ -417,7 +413,6 @@ function getConfig($nama, $config) {
     color: #6b7280;
   }
 
-  /* Badge pembayaran */
   .bayar-tags {
     display: flex;
     flex-wrap: wrap;
@@ -539,7 +534,6 @@ function getConfig($nama, $config) {
 
   <div class="page-body">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-section">
         <span class="sidebar-label">Menu Kelola</span>
@@ -554,7 +548,6 @@ function getConfig($nama, $config) {
       </div>
     </aside>
 
-    <!-- MAIN -->
     <div class="main-content">
 
       <div class="page-header">
@@ -562,7 +555,6 @@ function getConfig($nama, $config) {
         <p class="page-subtitle">Cari UMKM berdasarkan metode pembayaran yang diterima</p>
       </div>
 
-      <!-- SEARCH -->
       <form method="GET" action="">
         <?php if ($metodeFilter): ?>
         <input type="hidden" name="metode" value="<?= $metodeFilter ?>">
@@ -575,7 +567,7 @@ function getConfig($nama, $config) {
         </div>
       </form>
 
-      <!-- METODE CARDS -->
+
       <div class="metode-grid">
         <?php foreach ($statsMetode as $stat):
         $cfg = getConfig($stat['nama_metode'], $metodeConfig);
@@ -597,7 +589,7 @@ function getConfig($nama, $config) {
         <?php endforeach; ?>
       </div>
 
-      <!-- HASIL -->
+
       <?php if ($metodeFilter > 0 || $searchNama): ?>
 
       <?php
@@ -639,8 +631,8 @@ function getConfig($nama, $config) {
             default                     => '⚪ Non-Halal'
           };
           $metodeMilik = $u['semua_metode'] ? explode('|', $u['semua_metode']) : [];
-          $fotoPath = 'FOTO_UMKM/' . $u['foto'];
-          $adaFoto  = $u['foto'] && file_exists(__DIR__ . '/' . $fotoPath);
+          $fotoPath = $u['foto'];
+          $adaFoto  = $u['foto'] && file_exists($u['foto']);
         ?>
         <a href="detail_produk.php?id=<?= $u['id_umkm'] ?>" class="umkm-card">
 
@@ -658,7 +650,6 @@ function getConfig($nama, $config) {
             <div class="umkm-kontak">📞 <?= htmlspecialchars($u['nomor_kontak']) ?></div>
             <?php endif; ?>
 
-            <!-- Badge semua metode pembayaran -->
             <div class="bayar-tags">
               <?php foreach ($metodeMilik as $mNama):
                 $mCfg = getConfig(trim($mNama), $metodeConfig);
@@ -682,9 +673,9 @@ function getConfig($nama, $config) {
       <?php endif; ?>
 
       <?php else: ?>
-      <!-- Placeholder awal -->
+
       <div class="placeholder-state">
-        <div style="font-size:3rem;margin-bottom:16px;">💳</div>
+        <div style="font-size:3rem;margin-bottom:16px;"></div>
         <div style="font-family:'Playfair Display',serif;font-size:1.2rem;color:#1a1a2e;margin-bottom:8px;">
           Pilih Metode Pembayaran
         </div>

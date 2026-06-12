@@ -512,9 +512,9 @@ $total_pages = ceil($total_data / $limit);
             <td>
               <div class="action-buttons">
                 <a href="detail_umkm.php?id=<?= $row['id_umkm'] ?>" class="btn-detail">🔍 Detail</a>
-                <a href="edit_umkm.php?id=<?= $row['id_umkm'] ?>" class="btn-edit">✏️ Edit</a>
+                <a href="edit_umkm.php?id=<?= $row['id_umkm'] ?>" class="btn-edit">Edit</a>
                 <button onclick="confirmDelete(<?= $row['id_umkm'] ?>, '<?= htmlspecialchars($row['nama_umkm']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

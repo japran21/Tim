@@ -449,10 +449,9 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
 
   <div class="admin-container">
     <div class="admin-header">
-      <h1>🍽️ Manajemen Produk</h1>
+      <h1>Manajemen Produk</h1>
       <div class="btn-group">
         <a href="tambah_produk.php" class="btn-tambah">+ Tambah Produk Baru</a>
-        <a href="relasi_produk_rasa.php" class="btn-relasi">🔗 Kelola Relasi Produk-Rasa</a>
       </div>
     </div>
 
@@ -583,15 +582,15 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
             <td><?= htmlspecialchars($row['asal_daerah'] ?: '-') ?></td>
             <td>
               <div class="action-buttons">
-                <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="btn-detail">👁️ Detail</a>
-                <a href="edit_produk.php?id=<?= $row['id_produk'] ?>" class="btn-edit">✏️ Edit</a>
-                <a href="relasi_produk_rasa.php?id_produk=<?= $row['id_produk'] ?>" class="btn-rasa">😋 Rasa</a>
+                <a href="detail_produk.php?id=<?= $row['id_produk'] ?>" class="btn-detail">Detail</a>
+                <a href="edit_produk.php?id=<?= $row['id_produk'] ?>" class="btn-edit">Edit</a>
+                <a href="relasi_produk_rasa.php?id_produk=<?= $row['id_produk'] ?>" class="btn-rasa">Rasa</a>
                 <?php if ($row['kategori_produk'] === 'Makanan' || $row['kategori_produk'] === 'Minuman'): ?>
                 <a href="relasi_produk_topping.php?id_produk=<?= $row['id_produk'] ?>" class="btn-topping" style="padding: 5px 12px; border-radius: 8px; text-decoration: none; font-size: 0.75rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">Topping</a>
                 <?php endif; ?>
                 <button
                   onclick="confirmDelete(<?= $row['id_produk'] ?>, '<?= htmlspecialchars($row['nama_produk']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

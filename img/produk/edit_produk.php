@@ -234,7 +234,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="form-container">
     <div class="form-card">
-      <h1 class="form-title">✏️ Edit Produk</h1>
+      <h1 class="form-title">Edit Produk</h1>
       <p class="form-subtitle">Ubah informasi produk: <?= htmlspecialchars($produk['nama_produk']) ?></p>
 
       <?php if ($error): ?>
@@ -297,8 +297,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </form>
 
       <div class="info-card">
-        <span>🔗 Atur rasa untuk produk ini:</span>
-        <a href="relasi_produk_rasa.php?id_produk=<?= $id_produk ?>" class="btn-rasa">😋 Kelola Rasa Produk</a>
+        <span>Atur rasa untuk produk ini:</span>
+        <a href="relasi_produk_rasa.php?id_produk=<?= $id_produk ?>" class="btn-rasa">Kelola Rasa Produk</a>
       </div>
     </div>
   </div>

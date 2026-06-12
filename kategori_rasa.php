@@ -246,9 +246,9 @@ $result = mysqli_query($koneksi, $query);
             <td><?= htmlspecialchars($row['jenis_rasa']) ?></td>
             <td>
               <div class="action-buttons">
-                <a href="edit_kategori_rasa.php?id=<?= $row['id_rasa'] ?>" class="btn-edit">✏️ Edit</a>
+                <a href="edit_kategori_rasa.php?id=<?= $row['id_rasa'] ?>" class="btn-edit">Edit</a>
                 <button onclick="confirmDelete(<?= $row['id_rasa'] ?>, '<?= htmlspecialchars($row['jenis_rasa']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

@@ -510,11 +510,11 @@ $colorMitra = [
       <?php endif; ?>
     </div>
 
-    <!-- MAIN CONTENT -->
+
     <div class="main-content">
-      <!-- Waktu Operasional -->
+
       <div class="card">
-        <div class="card-title">🕒 Jam Operasional Mingguan</div>
+        <div class="card-title">Jam Operasional Mingguan</div>
         <div>
           <?php if (empty($waktuList)): ?>
           <p style="color: #6b7280; font-style: italic;">Jam operasional belum diatur untuk UMKM ini. <a
@@ -539,9 +539,8 @@ $colorMitra = [
         </div>
       </div>
 
-      <!-- Catalog Produk -->
       <div class="card">
-        <div class="card-title">🍽️ Menu & Produk (<?= count($produkList) ?>)</div>
+        <div class="card-title">Menu & Produk (<?= count($produkList) ?>)</div>
         <div class="product-grid">
           <?php if (empty($produkList)): ?>
           <p style="color: #6b7280; font-style: italic; grid-column: span 2;">Belum ada produk yang didaftarkan untuk
@@ -583,7 +582,7 @@ $colorMitra = [
         </div>
       </div>
 
-      <!-- Mitra Order Online -->
+
       <div class="card">
         <div class="card-title">🤝 Pesan Online Melalui Mitra</div>
         <div class="mitra-links-grid">

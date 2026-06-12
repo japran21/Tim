@@ -299,7 +299,7 @@ $color = $colorMitra[$mitra['nama_mitra']] ?? '#6b7280';
       <div>
         <h1 class="mitra-title"><?= htmlspecialchars($mitra['nama_mitra']) ?></h1>
         <div class="mitra-subtitle">
-          📈 Platform Pemesanan Online dengan <strong><?= count($umkmList) ?></strong> UMKM yang Terdaftar
+          Platform Pemesanan Online dengan <strong><?= count($umkmList) ?></strong> UMKM yang Terdaftar
         </div>
       </div>
     </div>

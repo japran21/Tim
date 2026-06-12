@@ -249,10 +249,10 @@ $result = mysqli_query($koneksi, $query);
             <td style="font-size: 1.5rem;"><?= $icon ?></td>
             <td>
               <div class="action-buttons">
-                <a href="edit_bayar.php?id=<?= $row['id_metode'] ?>" class="btn-edit">✏️ Edit</a>
+                <a href="edit_bayar.php?id=<?= $row['id_metode'] ?>" class="btn-edit">Edit</a>
                 <button
                   onclick="confirmDelete(<?= $row['id_metode'] ?>, '<?= htmlspecialchars($row['nama_metode']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

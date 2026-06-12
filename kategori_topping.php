@@ -247,9 +247,9 @@ $result = mysqli_query($koneksi, $query);
             <td><?= htmlspecialchars($row['nama_topping']) ?></td>
             <td>
               <div class="action-buttons">
-                <a href="edit_topping.php?id=<?= $row['id_topping'] ?>" class="btn-edit">✏️ Edit</a>
+                <a href="edit_topping.php?id=<?= $row['id_topping'] ?>" class="btn-edit">Edit</a>
                 <button onclick="confirmDelete(<?= $row['id_topping'] ?>, '<?= htmlspecialchars($row['nama_topping']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

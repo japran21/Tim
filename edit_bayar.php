@@ -187,7 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="form-container">
     <div class="form-card">
-      <h1 class="form-title">✏️ Edit Metode Pembayaran</h1>
+      <h1 class="form-title">Edit Metode Pembayaran</h1>
       <p class="form-subtitle">Ubah nama metode pembayaran #<?= $id_metode ?></p>
 
       <?php if ($error && $error_type === 'rollback'): ?>

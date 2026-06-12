@@ -427,10 +427,9 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
 
   <div class="admin-container">
     <div class="admin-header">
-      <h1>🍽️ Manajemen Produk</h1>
+      <h1>Manajemen Produk</h1>
       <div class="btn-group">
         <a href="tambah_produk.php" class="btn-tambah">+ Tambah Produk Baru</a>
-        <a href="relasi_produk_rasa.php" class="btn-relasi">🔗 Kelola Relasi Produk-Rasa</a>
       </div>
     </div>
 
@@ -547,11 +546,11 @@ $result_rasa = mysqli_query($koneksi, $query_rasa);
             <td><?= htmlspecialchars($row['asal_daerah'] ?: '-') ?></td>
             <td>
               <div class="action-buttons">
-                <a href="edit_produk.php?id=<?= $row['id_produk'] ?>" class="btn-edit">✏️ Edit</a>
-                <a href="relasi_produk_rasa.php?id_produk=<?= $row['id_produk'] ?>" class="btn-rasa">😋 Rasa</a>
+                <a href="edit_produk.php?id=<?= $row['id_produk'] ?>" class="btn-edit">Edit</a>
+                <a href="relasi_produk_rasa.php?id_produk=<?= $row['id_produk'] ?>" class="btn-rasa">Rasa</a>
                 <button
                   onclick="confirmDelete(<?= $row['id_produk'] ?>, '<?= htmlspecialchars($row['nama_produk']) ?>')"
-                  class="btn-delete">🗑️ Hapus</button>
+                  class="btn-delete">Hapus</button>
               </div>
             </td>
           </tr>

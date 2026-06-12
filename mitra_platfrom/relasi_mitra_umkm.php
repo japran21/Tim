@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'koneksi.php';
+require_once '../koneksi.php';
 
 $message = '';
 $messageType = '';
@@ -84,7 +84,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kelola Relasi UMKM-Mitra - Street Food Ciwaruga</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../style.css">
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap"
     rel="stylesheet">
@@ -411,7 +411,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
 
   <header class="navbar">
     <div class="nav-inner">
-      <a href="index.php" class="brand" style="text-decoration:none;">
+      <a href="../index.php" class="brand" style="text-decoration:none;">
         <span class="brand-icon">🏪</span>
         <div class="brand-text">
           <span class="brand-name">STREET FOOD</span>
@@ -419,19 +419,19 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
         </div>
       </a>
       <nav class="nav-links">
-        <a href="index.php">Beranda</a>
-        <a href="umkm.php">Kelola UMKM</a>
-        <a href="produk.php">Kelola Produk</a>
-        <a href="kategori_rasa.php">Kelola Rasa</a>
-        <a href="bayar.php">Kelola Pembayaran</a>
-        <a href="mitra.php" class="active">Kelola Mitra</a>
+        <a href="../index.php">Beranda</a>
+        <a href="../umkm.php">Kelola UMKM</a>
+        <a href="../produk.php">Kelola Produk</a>
+        <a href="../kategori_rasa.php">Kelola Rasa</a>
+        <a href="../bayar.php">Kelola Pembayaran</a>
+        <a href="../mitra.php" class="active">Kelola Mitra</a>
       </nav>
       <div class="nav-actions"></div>
     </div>
   </header>
 
   <div class="container">
-    <h1 class="page-title">🔗 Kelola Relasi UMKM–Mitra</h1>
+    <h1 class="page-title">Kelola Relasi UMKM–Mitra</h1>
 
     <?php if ($message): ?>
     <div class="message <?= $messageType ?>">
@@ -487,7 +487,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
           <?= $icon ?> <?= htmlspecialchars($m['nama_mitra']) ?>
           <?php if ($link): ?>
           <a href="<?= htmlspecialchars($link) ?>" target="_blank"
-            style="color:#fff;text-decoration:none;margin-left:4px;">🔗</a>
+            style="color:#fff;text-decoration:none;margin-left:4px;"></a>
           <?php endif; ?>
           <a href="?id_umkm=<?= $selected_id ?>&hapus_mitra=1&id_mitra=<?= $m['id_mitra'] ?>" class="remove"
             onclick="return confirm('Hapus <?= htmlspecialchars($m['nama_mitra']) ?> dari UMKM ini?')">✕</a>
@@ -525,7 +525,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
             </div>
             <div class="link-field" id="link_field_<?= $m['id_mitra'] ?>"
               style="display:<?= $checked ? 'flex' : 'none' ?>;">
-              <label>🔗 Link:</label>
+              <label>Link:</label>
               <input type="text" name="links[<?= $m['id_mitra'] ?>]" placeholder="https://gofood.link/a/xxxx"
                 value="<?= htmlspecialchars($currentLink) ?>">
             </div>
@@ -545,7 +545,7 @@ $colorMitra = ['GoFood'=>'#00b14f','GrabFood'=>'#00b14f','ShopeeFood'=>'#ee4d2d'
 
     <?php else: ?>
     <div class="card">
-      <div class="placeholder-text">👆 Pilih UMKM di atas untuk mengelola relasi mitra platformnya.</div>
+      <div class="placeholder-text">Pilih UMKM di atas untuk mengelola relasi mitra platformnya.</div>
     </div>
     <?php endif; ?>
   </div>

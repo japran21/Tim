@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="form-container">
     <div class="form-card">
-      <h1 class="form-title">✏️ Edit Mitra Platform</h1>
+      <h1 class="form-title">Edit Mitra Platform</h1>
       <p class="form-subtitle">Ubah informasi mitra platform</p>
 
       <?php 

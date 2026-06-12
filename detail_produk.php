@@ -135,11 +135,11 @@ $emojiKategori = [
     'Topping' => '',
 ];
 $emojiRasa = [
-    'Asin'  => '🧂',
-    'Gurih' => '🍗',
+    'Asin'  => '',
+    'Gurih' => '',
     'Manis' => '',
-    'Pedas' => '🌶️',
-    'Asam'  => '🍋',
+    'Pedas' => '',
+    'Asam'  => '',
 ];
 $emojiTopping = [
     'Keju' => '',
@@ -873,7 +873,7 @@ foreach ($waktuList as $w) {
             <div class="rasa-tags">
               <?php foreach ($rasaList as $rasa): 
                 $namaRasa = htmlspecialchars($rasa['jenis_rasa']);
-                $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '🍽️';
+                $emoji = $emojiRasa[$rasa['jenis_rasa']] ?? '';
               ?>
               <span class="rasa-tag rasa-<?= $namaRasa ?>">
                 <?= $emoji ?> <?= $namaRasa ?>
@@ -956,7 +956,7 @@ foreach ($waktuList as $w) {
 
         <!-- Waktu Operasional -->
         <div class="info-card">
-          <div class="info-card-title">🕒 Jam Operasional</div>
+          <div class="info-card-title">Jam Operasional</div>
           <?php if (empty($waktuList)): ?>
           <p style="color: #6b7280; font-style: italic; font-size: 0.88rem;">
             Jam operasional belum diatur untuk UMKM ini.
@@ -991,7 +991,7 @@ foreach ($waktuList as $w) {
         <!-- Metode Pembayaran -->
         <?php if (!empty($bayarList)): ?>
         <div class="info-card">
-          <div class="info-card-title">💳 Metode Pembayaran</div>
+          <div class="info-card-title">Metode Pembayaran</div>
           <div class="payment-list">
             <?php foreach ($bayarList as $bayar): ?>
             <span class="payment-badge">
@@ -1026,7 +1026,7 @@ foreach ($waktuList as $w) {
     <!-- Produk Lainnya dari UMKM yang sama -->
     <?php if (!empty($produkLainnya)): ?>
     <div class="other-products-section">
-      <h2 class="section-title">🍽️ Produk Lainnya dari <?= htmlspecialchars($produk['nama_umkm']) ?></h2>
+      <h2 class="section-title">Produk Lainnya dari <?= htmlspecialchars($produk['nama_umkm']) ?></h2>
       <div class="other-products-grid">
         <?php foreach ($produkLainnya as $lain):
           $emojiLain = $emojiKategori[$lain['kategori_produk']] ?? '🍿';
